@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1611504168 source:c:\chess\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<SDL.h>
+	<SDL_IMAGE.h>
+	<SDL_TTF.h>
+	<SDL_MIXER.h>
+	<windows.h>
+
+1611482198 source:c:\chess\images\icon.rc
+
