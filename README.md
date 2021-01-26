@@ -21,7 +21,6 @@
 
 • References.
 
-3
 Game Description and Features:
 
 An offline chess game for two players with a GUI design using the SDL library.
