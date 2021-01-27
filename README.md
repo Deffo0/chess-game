@@ -1,7 +1,7 @@
 # chess game
  It is an informal chess game with GUI design using SDL libraries.
  
- Report Contents:
+  Contents:
  
 • Game Description and Features.
 
