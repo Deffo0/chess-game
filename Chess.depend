@@ -11,3 +11,15 @@
 
 1611482198 source:c:\chess\images\icon.rc
 
+1611482198 source:c:\users\ahmed\onedrive\my documents\chess-game\images\icon.rc
+
+1617697774 source:c:\users\ahmed\onedrive\my documents\chess-game\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<SDL.h>
+	<SDL_IMAGE.h>
+	<SDL_TTF.h>
+	<SDL_MIXER.h>
+	<windows.h>
+

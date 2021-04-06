@@ -47,7 +47,7 @@ int die_x[63], x, die_y[63], y, wdx = 0, wdy = 0, bdx = 0, bdy = 0, w = 0, s = 0
 
 //-----------------------------------------------//
 // Initialize structure to contain all dynamic properties of the game loop:
-typedef struct game_proberties{
+typedef struct game_properties{
     // Flag for Dead position and stalemate
     int d_pos;
     int stale;
@@ -135,8 +135,8 @@ typedef struct game_proberties{
     // Flag and an array for en passant moves
     int en_passant;
     int passant[32];
-}game_proberties;
-game_proberties game_prob;
+}game_properties;
+game_properties game_prop;
 //-----------------------------------------------//
 // Initialize a structure for the pieces to determine its coordinates etc..
 typedef struct piece_pos{
@@ -400,49 +400,49 @@ void setup(void){
     piece[31].type = 'r';
     //-----------------------------------------------//
     // Enter initial values for the flags, counter and coordinates for the whole game:
-    game_prob.w_o_b = 1;
-    game_prob.do_count = 0;
-    game_prob.cover = 0;
-    game_prob.covered = 0;
-    game_prob.wpromo = 0;
-    game_prob.bpromo = 0;
-    game_prob.do_wpromo = 0;
-    game_prob.do_bpromo = 0;
-    game_prob.brc_w_k = 0;
-    game_prob.blc_w_k = 0;
-    game_prob.wrc_w_k = 0;
-    game_prob.wlc_w_k = 0;
-    game_prob.bcas = 0;
-    game_prob.wcas = 0;
-    game_prob.prev = -1;
-    game_prob.check = 0;
-    game_prob.w_check = 0;
-    game_prob.b_check = 0;
-    game_prob.T_piece = -5;
-    game_prob.b_mate = 0;
-    game_prob.w_mate = 0;
-    game_prob.bpr = 0;
-    game_prob.bpb = 0;
-    game_prob.bpn = 0;
-    game_prob.bpq = 0;
-    game_prob.wpr = 0;
-    game_prob.wpb = 0;
-    game_prob.wpn = 0;
-    game_prob.wpq = 0;
-    game_prob.d_pos = 0;
-    game_prob.stale = 0;
-    game_prob.cov_shield = 0;
-    game_prob.en_passant = 0;
+    game_prop.w_o_b = 1;
+    game_prop.do_count = 0;
+    game_prop.cover = 0;
+    game_prop.covered = 0;
+    game_prop.wpromo = 0;
+    game_prop.bpromo = 0;
+    game_prop.do_wpromo = 0;
+    game_prop.do_bpromo = 0;
+    game_prop.brc_w_k = 0;
+    game_prop.blc_w_k = 0;
+    game_prop.wrc_w_k = 0;
+    game_prop.wlc_w_k = 0;
+    game_prop.bcas = 0;
+    game_prop.wcas = 0;
+    game_prop.prev = -1;
+    game_prop.check = 0;
+    game_prop.w_check = 0;
+    game_prop.b_check = 0;
+    game_prop.T_piece = -5;
+    game_prop.b_mate = 0;
+    game_prop.w_mate = 0;
+    game_prop.bpr = 0;
+    game_prop.bpb = 0;
+    game_prop.bpn = 0;
+    game_prop.bpq = 0;
+    game_prop.wpr = 0;
+    game_prop.wpb = 0;
+    game_prop.wpn = 0;
+    game_prop.wpq = 0;
+    game_prop.d_pos = 0;
+    game_prop.stale = 0;
+    game_prop.cov_shield = 0;
+    game_prop.en_passant = 0;
     //-----------------------------------------------//
     for(j = 0; j < 5000; j++){
-        game_prob.compare[j] = -10;
+        game_prop.compare[j] = -10;
     }
     //-----------------------------------------------//
     for (j = 0; j < 32; j++){
         piece[j].brow_prev = -1;
         piece[j].bcol_prev = -1;
         piece[j].l_o_d = 1;
-        game_prob.passant[j] = 0;
+        game_prop.passant[j] = 0;
     }
     //-----------------------------------------------//
     for (j = 0; j < 63; j++){
@@ -531,10 +531,10 @@ void clearing(void){
     line_y = 0;
     x = 0;
     y = 0;
-    game_prob.blc_w_k = 0;
-    game_prob.brc_w_k = 0;
-    game_prob.wlc_w_k = 0;
-    game_prob.wrc_w_k = 0;
+    game_prop.blc_w_k = 0;
+    game_prop.brc_w_k = 0;
+    game_prop.wlc_w_k = 0;
+    game_prop.wrc_w_k = 0;
 }
 
 //#-------------------------------------------------------------------------#
@@ -598,7 +598,7 @@ void wsol(int piece_moves, int ally, int enemy, int p, int l){
     }
     // Left Moves if there is an enemy to kill by en passant
     if(board_types[piece[piece_moves].brow][piece[piece_moves].bcol - 1] == bp &&
-        game_prob.en_passant > 0 &&
+        game_prop.en_passant > 0 &&
         piece[piece_moves].bcol - 1 >= 0 && piece[piece_moves].brow == 3 &&
         board_types[piece[piece_moves].brow - 1][piece[piece_moves].bcol - 1] == 0){
         piece[piece_moves].valid_moves_x[piece[piece_moves].cx] = (piece[piece_moves].bcol - 1) * 75;
@@ -611,9 +611,8 @@ void wsol(int piece_moves, int ally, int enemy, int p, int l){
         y++;
     }
     // Right Moves if there is an enemy to kill by en passant
-    printf("\n\n%d\n\n",game_prob.en_passant);
     if(board_types[piece[piece_moves].brow][piece[piece_moves].bcol + 1] == bp &&
-        game_prob.en_passant > 0 &&
+        game_prop.en_passant > 0 &&
         piece[piece_moves].bcol + 1 < 8 && piece[piece_moves].brow == 3 &&
         board_types[piece[piece_moves].brow - 1][piece[piece_moves].bcol + 1] == 0){
         piece[piece_moves].valid_moves_x[piece[piece_moves].cx] = (piece[piece_moves].bcol + 1) * 75;
@@ -684,10 +683,9 @@ void bsol(int piece_moves, int ally, int enemy, int p, int l){
         piece[piece_moves].cover_cx++;
         piece[piece_moves].cover_cy++;
     }
-    printf("\n\n black %d", game_prob.en_passant);
     // Left Moves if there is an enemy to kill by en passant
     if(board_types[piece[piece_moves].brow][piece[piece_moves].bcol - 1] == wp &&
-        game_prob.en_passant > 0 &&
+        game_prop.en_passant > 0 &&
         piece[piece_moves].bcol - 1 >= 0 && piece[piece_moves].brow == 4 &&
         board_types[piece[piece_moves].brow + 1][piece[piece_moves].bcol - 1] == 0){
         piece[piece_moves].valid_moves_x[piece[piece_moves].cx] = (piece[piece_moves].bcol - 1) * 75;
@@ -701,7 +699,7 @@ void bsol(int piece_moves, int ally, int enemy, int p, int l){
     }
     // Right Moves if there is an enemy to kill by en passant
     if(board_types[piece[piece_moves].brow][piece[piece_moves].bcol + 1] == wp &&
-        game_prob.en_passant > 0 &&
+        game_prop.en_passant > 0 &&
         piece[piece_moves].bcol + 1 < 8 && piece[piece_moves].brow == 4 &&
         board_types[piece[piece_moves].brow + 1][piece[piece_moves].bcol + 1] == 0){
         piece[piece_moves].valid_moves_x[piece[piece_moves].cx] = (piece[piece_moves].bcol + 1) * 75;
@@ -1411,7 +1409,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
         // Check all enemy's valid moves which attack the king's valid moves
         for(s; s < e; s++){
             // If the king was checked, consider this action
-            if(game_prob.w_check || game_prob.b_check){
+            if(game_prop.w_check || game_prop.b_check){
                 temp_bcol = piece[chosen_piece].bcol;
                 temp_brow = piece[chosen_piece].brow;
                 temp_b1 = board[piece[chosen_piece].brow][piece[chosen_piece].bcol];
@@ -1422,7 +1420,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
             // Get the valid moves the enemy piece
             get_valid_moves(s);
             // If there was a check, remove the action which was considered
-            if(game_prob.w_check || game_prob.b_check){
+            if(game_prop.w_check || game_prop.b_check){
                 board[temp_brow][temp_bcol] = temp_b1;
                 board_types[temp_brow][temp_bcol] = temp_b2;
             }
@@ -1885,7 +1883,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
                 piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
                 piece[piece_moves].cx++;
                 piece[piece_moves].cy++;
-                game_prob.wrc_w_k = 1;
+                game_prop.wrc_w_k = 1;
             }
         }else{
             // Reset the flag value
@@ -1901,7 +1899,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
                 piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
                 piece[piece_moves].cx++;
                 piece[piece_moves].cy++;
-                game_prob.wlc_w_k = 1;
+                game_prop.wlc_w_k = 1;
             }
         }else{
             // Reset the flag value
@@ -1917,7 +1915,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
                 piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
                 piece[piece_moves].cx++;
                 piece[piece_moves].cy++;
-                game_prob.brc_w_k = 1;
+                game_prop.brc_w_k = 1;
             }
         }else{
             // Reset the flag value
@@ -1933,7 +1931,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
                 piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
                 piece[piece_moves].cx++;
                 piece[piece_moves].cy++;
-                game_prob.blc_w_k = 1;
+                game_prop.blc_w_k = 1;
             }
         }else{
             // Reset the flag value
@@ -2175,7 +2173,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
             piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
             piece[piece_moves].cx++;
             piece[piece_moves].cy++;
-            game_prob.wrc_w_k = 1;
+            game_prop.wrc_w_k = 1;
         }
         // Right King Castling on The Left Side
         if(piece[piece_moves].brow == 7 && piece[piece_moves].bcol == 4
@@ -2186,7 +2184,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
             piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
             piece[piece_moves].cx++;
             piece[piece_moves].cy++;
-            game_prob.wlc_w_k = 1;
+            game_prop.wlc_w_k = 1;
         }
         // Black King Castling on The Right Side
         if(piece[piece_moves].brow == 0 && piece[piece_moves].bcol == 4
@@ -2197,7 +2195,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
             piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
             piece[piece_moves].cx++;
             piece[piece_moves].cy++;
-            game_prob.brc_w_k = 1;
+            game_prop.brc_w_k = 1;
         }
         // Black King Castling on The Left Side
         if(piece[piece_moves].brow == 0 && piece[piece_moves].bcol == 4
@@ -2208,7 +2206,7 @@ void king(int piece_moves, int ally, int enemy, int p, int l){
             piece[piece_moves].valid_moves_y[piece[piece_moves].cy] = (piece[piece_moves].brow) * 75;
             piece[piece_moves].cx++;
             piece[piece_moves].cy++;
-            game_prob.blc_w_k = 1;
+            game_prop.blc_w_k = 1;
         }
     }
 }
@@ -2261,9 +2259,9 @@ void check_enemy_line(void){
     int l, p;
     // Positive Horizontal Line
     if(l1){
-        for(p = (piece[game_prob.king_check].bcol + 1); p < 8; p++){
+        for(p = (piece[game_prop.king_check].bcol + 1); p < 8; p++){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.king_check].brow == piece[game_prob.T_piece].brow) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.king_check].brow == piece[game_prop.T_piece].brow) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line1 = 1;
                 break;
             }
@@ -2275,9 +2273,9 @@ void check_enemy_line(void){
     }
     // Negative Horizontal Line
     if(l2){
-        for(p = (piece[game_prob.king_check].bcol - 1); p >= 0; p--){
+        for(p = (piece[game_prop.king_check].bcol - 1); p >= 0; p--){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.king_check].brow == piece[game_prob.T_piece].brow) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.king_check].brow == piece[game_prop.T_piece].brow) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line2 = 1;
                 break;
             }
@@ -2289,9 +2287,9 @@ void check_enemy_line(void){
     }
     // Positive Vertical Line
     if(l3){
-        for(p = (piece[game_prob.king_check].brow + 1); p < 8; p++){
+        for(p = (piece[game_prop.king_check].brow + 1); p < 8; p++){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == p) && (piece[game_prob.king_check].bcol == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == p) && (piece[game_prop.king_check].bcol == piece[game_prop.T_piece].bcol))){
                 enemy_line3 = 1;
                 break;
             }
@@ -2303,9 +2301,9 @@ void check_enemy_line(void){
     }
     // Negative Vertical Line
     if(l4){
-        for(p = (piece[game_prob.king_check].brow - 1); p >= 0; p--){
+        for(p = (piece[game_prop.king_check].brow - 1); p >= 0; p--){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == p) && (piece[game_prob.king_check].bcol == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == p) && (piece[game_prop.king_check].bcol == piece[game_prop.T_piece].bcol))){
                 enemy_line4 = 1;
                 break;
             }
@@ -2317,9 +2315,9 @@ void check_enemy_line(void){
     }
     // Upper Right Diagonal Line
     if(l5){
-        for(p = piece[game_prob.king_check].bcol + 1, l = piece[game_prob.king_check].brow - 1 ; p < 8 && l >= 0; p++, l--){
+        for(p = piece[game_prop.king_check].bcol + 1, l = piece[game_prop.king_check].brow - 1 ; p < 8 && l >= 0; p++, l--){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == l) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == l) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line5 = 1;
                 break;
             }
@@ -2331,9 +2329,9 @@ void check_enemy_line(void){
     }
     // Upper Left Diagonal Line
     if(l6){
-        for(p = piece[game_prob.king_check].bcol - 1, l = piece[game_prob.king_check].brow - 1; p >= 0 && l >= 0; p--, l--){
+        for(p = piece[game_prop.king_check].bcol - 1, l = piece[game_prop.king_check].brow - 1; p >= 0 && l >= 0; p--, l--){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == l) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == l) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line6 = 1;
                 break;
             }
@@ -2345,9 +2343,9 @@ void check_enemy_line(void){
     }
     // Lower Right Diagonal Line
     if(l7){
-        for(p = piece[game_prob.king_check].bcol + 1, l = piece[game_prob.king_check].brow + 1; p < 8 && l < 8; p++, l++){
+        for(p = piece[game_prop.king_check].bcol + 1, l = piece[game_prop.king_check].brow + 1; p < 8 && l < 8; p++, l++){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == l) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == l) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line7 = 1;
                 break;
             }
@@ -2359,9 +2357,9 @@ void check_enemy_line(void){
     }
     // Lower Left Diagonal Line
     if(l8){
-        for(p = piece[game_prob.king_check].bcol - 1,l = piece[game_prob.king_check].brow + 1;p >= 0 && l < 8; p--, l++){
+        for(p = piece[game_prop.king_check].bcol - 1,l = piece[game_prop.king_check].brow + 1;p >= 0 && l < 8; p--, l++){
             // If the enemy on this line, equal flag to one
-            if((piece[game_prob.T_piece].brow == l) && (p == piece[game_prob.T_piece].bcol)){
+            if(((piece[game_prop.T_piece].brow == l) && (p == piece[game_prop.T_piece].bcol))){
                 enemy_line8 = 1;
                 break;
             }
@@ -2375,25 +2373,26 @@ void check_enemy_line(void){
 
 //#-------------------------------------------------------------------------#
 
+// Find the intersection of the king's line and enemy and record the valid moves to stop the attack
 void check_king_line(int ally, int enemy){
     // Call the function to find the line of the enemy which attacks the king
     check_enemy_line();
     int l, p;
     // Positive Horizontal Line
     if(l1 && enemy_line1){
-        for(p = (piece[game_prob.king_check].bcol + 1); p < 8; p++){
+        for(p = (piece[game_prop.king_check].bcol + 1); p < 8; p++){
             // If there is an ally on the line move, stop this loop
-            if(board[piece[game_prob.king_check].brow][p] == ally){
+            if(board[piece[game_prop.king_check].brow][p] == ally){
                 break;
             }
             // If there is an enemy, confirm this line and save the valid moves on this line
             // If there is no one, keep searching until there is no valid moves on this line
-            else if(board[piece[game_prob.king_check].brow][p] == 0 || board[piece[game_prob.king_check].brow][p] == enemy){
+            else if(board[piece[game_prop.king_check].brow][p] == 0 || board[piece[game_prop.king_check].brow][p] == enemy){
                 line_moves_x[line_x] = p * 75;
                 line_x++;
-                line_moves_y[line_y] = (piece[game_prob.king_check].brow) * 75;
+                line_moves_y[line_y] = (piece[game_prop.king_check].brow) * 75;
                 line_y++;
-                if(board[piece[game_prob.king_check].brow][p] == enemy){
+                if(board[piece[game_prop.king_check].brow][p] == enemy){
                     break;
                 }
             }
@@ -2404,19 +2403,19 @@ void check_king_line(int ally, int enemy){
     }
     // Negative Horizontal Line
     if(l2 && enemy_line2){
-        for(p = (piece[game_prob.king_check].bcol - 1); p >= 0; p--){
+        for(p = (piece[game_prop.king_check].bcol - 1); p >= 0; p--){
             // If there is an ally on the line move, stop this loop
-            if(board[piece[game_prob.king_check].brow][p] == ally){
+            if(board[piece[game_prop.king_check].brow][p] == ally){
                 break;
             }
             // If there is an enemy, confirm this line and save the valid moves on this line
             // If there is no one, keep searching until there is no valid moves on this line
-            else if(board[piece[game_prob.king_check].brow][p] == 0 || board[piece[game_prob.king_check].brow][p] == enemy){
+            else if(board[piece[game_prop.king_check].brow][p] == 0 || board[piece[game_prop.king_check].brow][p] == enemy){
                 line_moves_x[line_x] = p * 75;
                 line_x++;
-                line_moves_y[line_y] = (piece[game_prob.king_check].brow) * 75;
+                line_moves_y[line_y] = (piece[game_prop.king_check].brow) * 75;
                 line_y++;
-                if(board[piece[game_prob.king_check].brow][p] == enemy){
+                if(board[piece[game_prop.king_check].brow][p] == enemy){
                     break;
                 }
             }
@@ -2427,19 +2426,19 @@ void check_king_line(int ally, int enemy){
     }
     // Positive Vertical Line
     if(l3 && enemy_line3){
-        for(p = (piece[game_prob.king_check].brow + 1); p < 8; p++){
+        for(p = (piece[game_prop.king_check].brow + 1); p < 8; p++){
             // If there is an ally on the line move, stop this loop
-            if(board[p][piece[game_prob.king_check].bcol] == ally){
+            if(board[p][piece[game_prop.king_check].bcol] == ally){
                 break;
             }
             // If there is an enemy, confirm this line and save the valid moves on this line
             // If there is no one, keep searching until there is no valid moves on this line
-            else if(board[p][piece[game_prob.king_check].bcol] == 0 || board[p][piece[game_prob.king_check].bcol] == enemy){
-                line_moves_x[line_x] = (piece[game_prob.king_check].bcol) * 75;
+            else if(board[p][piece[game_prop.king_check].bcol] == 0 || board[p][piece[game_prop.king_check].bcol] == enemy){
+                line_moves_x[line_x] = (piece[game_prop.king_check].bcol) * 75;
                 line_x++;
                 line_moves_y[line_y] = p * 75;
                 line_y++;
-                if(board[p][piece[game_prob.king_check].bcol] == enemy){
+                if(board[p][piece[game_prop.king_check].bcol] == enemy){
                     break;
                 }
             }
@@ -2450,19 +2449,19 @@ void check_king_line(int ally, int enemy){
     }
     // Negative Vertical Line
     if(l4 && enemy_line4){
-        for(p = (piece[game_prob.king_check].brow - 1); p >= 0; p--){
+        for(p = (piece[game_prop.king_check].brow - 1); p >= 0; p--){
             // If there is an ally on the line move, stop this loop
-            if(board[p][piece[game_prob.king_check].bcol] == ally){
+            if(board[p][piece[game_prop.king_check].bcol] == ally){
                 break;
             }
             // If there is an enemy, confirm this line and save the valid moves on this line
             // If there is no one, keep searching until there is no valid moves on this line
-            else if(board[p][piece[game_prob.king_check].bcol] == 0 || board[p][piece[game_prob.king_check].bcol] == enemy){
-                line_moves_x[line_x] = piece[game_prob.king_check].bcol * 75;
+            else if(board[p][piece[game_prop.king_check].bcol] == 0 || board[p][piece[game_prop.king_check].bcol] == enemy){
+                line_moves_x[line_x] = piece[game_prop.king_check].bcol * 75;
                 line_x++;
                 line_moves_y[line_y] = p * 75;
                 line_y++;
-                if(board[p][piece[game_prob.king_check].bcol] == enemy){
+                if(board[p][piece[game_prop.king_check].bcol] == enemy){
                     break;
                 }
             }
@@ -2473,7 +2472,7 @@ void check_king_line(int ally, int enemy){
     }
     // Upper Right Diagonal Line
     if(l5 && enemy_line5){
-        for(p = piece[game_prob.king_check].bcol + 1, l = piece[game_prob.king_check].brow - 1 ; p < 8 && l >= 0; p++, l--){
+        for(p = piece[game_prop.king_check].bcol + 1, l = piece[game_prop.king_check].brow - 1 ; p < 8 && l >= 0; p++, l--){
             // If there is an ally on the line move, stop this loop
             if(board[l][p] == ally){
                 break;
@@ -2496,7 +2495,7 @@ void check_king_line(int ally, int enemy){
     }
     // Upper Left Diagonal Line
     if(l6 && enemy_line6){
-        for(p = piece[game_prob.king_check].bcol - 1, l = piece[game_prob.king_check].brow - 1; p >= 0 && l >= 0; p--, l--){
+        for(p = piece[game_prop.king_check].bcol - 1, l = piece[game_prop.king_check].brow - 1; p >= 0 && l >= 0; p--, l--){
             // If there is an ally on the line move, stop this loop
             if(board[l][p] == ally){
                 break;
@@ -2519,7 +2518,7 @@ void check_king_line(int ally, int enemy){
     }
     // Lower Right Diagonal Line
     if(l7 && enemy_line7){
-        for(p = piece[game_prob.king_check].bcol + 1, l = piece[game_prob.king_check].brow + 1; p < 8 && l < 8; p++, l++){
+        for(p = piece[game_prop.king_check].bcol + 1, l = piece[game_prop.king_check].brow + 1; p < 8 && l < 8; p++, l++){
             // If there is an ally on the line move, stop this loop
             if(board[l][p] == ally){
                 break;
@@ -2542,7 +2541,7 @@ void check_king_line(int ally, int enemy){
     }
     // Lower Left Diagonal Line
     if(l8 && enemy_line8){
-        for(p = piece[game_prob.king_check].bcol - 1,l = piece[game_prob.king_check].brow + 1;p >= 0 && l < 8; p--, l++){
+        for(p = piece[game_prop.king_check].bcol - 1,l = piece[game_prop.king_check].brow + 1;p >= 0 && l < 8; p--, l++){
             // If there is an ally on the line move, stop this loop
             if(board[l][p] == ally){
                 break;
@@ -2565,59 +2564,146 @@ void check_king_line(int ally, int enemy){
     }
 }
 
+// Find the position of the knight which attack the king, and record it
+void king_knight_att(void){
+    int j;
+    for(j = 0; j < piece[game_prop.T_piece].cx; j++){
+        // Lower Right Direction
+        if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol + 1 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 2)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol + 1) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow + 2) * 75;
+            line_y++;
+        }
+        // Upper Right Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol + 1 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 2)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol + 1) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow - 2) * 75;
+            line_y++;
+        }
+        // Lower Left Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol - 1 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 2)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol - 1) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow + 2) * 75;
+            line_y++;
+        }
+        // Upper Left Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol - 1 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 2)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol - 1) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow - 2) * 75;
+            line_y++;
+        }
+        // Right Lower Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol + 2 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 1)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol + 2) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow + 1) * 75;
+            line_y++;
+        }
+        // Right Upper Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol + 2 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 1)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol + 2) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow - 1) * 75;
+            line_y++;
+        }
+        // Left Lower Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol - 2 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 1)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol - 2) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow + 1) * 75;
+            line_y++;
+        }
+        // Left Upper Direction
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) &&
+        (piece[game_prop.T_piece].bcol == piece[game_prop.king_check].bcol - 2 &&
+        piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 1)){
+            line_moves_x[line_x] = (piece[game_prop.king_check].bcol - 2) * 75;
+            line_x++;
+            line_moves_y[line_y] = (piece[game_prop.king_check].brow - 1) * 75;
+            line_y++;
+        }
+    }
+}
+
 //#-------------------------------------------------------------------------#
 
 // Find the Line Which the threaten piece attacks the king from it
 void check_line(void){
     int j;
     // If the king on this line, equal line flag to one
-    for(j = 0; j < piece[game_prob.T_piece].cx; j++){
+    for(j = 0; j < piece[game_prop.T_piece].cx; j++){
         // Positive Horizontal Line
-        if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol + 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow) ||
-        ((piece[game_prob.king_check].brow == piece[game_prob.T_piece].brow) && (piece[game_prob.king_check].bcol + 1 == piece[game_prob.T_piece].bcol))){
+        if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol + 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) ||
+        ((piece[game_prop.king_check].brow == piece[game_prop.T_piece].brow) && (piece[game_prop.king_check].bcol + 1 == piece[game_prop.T_piece].bcol))){
             l1 = 1;
         }
         // Negative Horizontal Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol - 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow) ||
-        ((piece[game_prob.king_check].brow == piece[game_prob.T_piece].brow) && (piece[game_prob.king_check].bcol - 1 == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol - 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow) ||
+        ((piece[game_prop.king_check].brow == piece[game_prop.T_piece].brow) && (piece[game_prop.king_check].bcol - 1 == piece[game_prop.T_piece].bcol))){
             l2 = 1;
         }
         // Positive Vertical Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow + 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow + 1) && (piece[game_prob.king_check].bcol == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow + 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 1) && (piece[game_prop.king_check].bcol == piece[game_prop.T_piece].bcol))){
             l3 = 1;
         }
         // Negative Vertical Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow - 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow - 1) && (piece[game_prob.king_check].bcol == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow - 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 1) && (piece[game_prop.king_check].bcol == piece[game_prop.T_piece].bcol))){
             l4 = 1;
         }
         // Upper Right Diagonal Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol + 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow - 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow - 1) && (piece[game_prob.king_check].bcol + 1 == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol + 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow - 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 1) && (piece[game_prop.king_check].bcol + 1 == piece[game_prop.T_piece].bcol))){
             l5 = 1;
         }
         // Upper Left Diagonal Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol - 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow - 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow - 1) && (piece[game_prob.king_check].bcol - 1 == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol - 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow - 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow - 1) && (piece[game_prop.king_check].bcol - 1 == piece[game_prop.T_piece].bcol))){
             l6 = 1;
         }
         // Lower Right Diagonal Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol + 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow + 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow + 1) && (piece[game_prob.king_check].bcol + 1 == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol + 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow + 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 1) && (piece[game_prop.king_check].bcol + 1 == piece[game_prop.T_piece].bcol))){
             l7 = 1;
         }
         // Lower Left Diagonal Line
-        else if(((piece[game_prob.T_piece].valid_moves_x[j]) / 75 == piece[game_prob.king_check].bcol - 1 &&
-        (piece[game_prob.T_piece].valid_moves_y[j] / 75) == piece[game_prob.king_check].brow + 1) ||
-        ((piece[game_prob.T_piece].brow == piece[game_prob.king_check].brow + 1) && (piece[game_prob.king_check].bcol - 1 == piece[game_prob.T_piece].bcol))){
+        else if(((piece[game_prop.T_piece].valid_moves_x[j]) / 75 == piece[game_prop.king_check].bcol - 1 &&
+        (piece[game_prop.T_piece].valid_moves_y[j] / 75) == piece[game_prop.king_check].brow + 1) ||
+        ((piece[game_prop.T_piece].brow == piece[game_prop.king_check].brow + 1) && (piece[game_prop.king_check].bcol - 1 == piece[game_prop.T_piece].bcol))){
             l8 = 1;
         }
     }
@@ -2632,7 +2718,7 @@ void covered_matching(void){
             // If there is equal values, save it
             if((piece[chosen_piece].valid_moves_x[u] == line_moves_x[o]) &&
             (piece[chosen_piece].valid_moves_y[u] == line_moves_y[o])){
-                game_prob.covered = 1;
+                game_prop.covered = 1;
                 valid_line_x[shield_x] = piece[chosen_piece].valid_moves_x[u];
                 valid_line_y[shield_y] = piece[chosen_piece].valid_moves_y[u];
                 shield_x++;
@@ -2640,13 +2726,13 @@ void covered_matching(void){
             }
         }
     }
-    if(game_prob.covered == 1){
+    if(game_prop.covered == 1){
         // When there is equal values, record it to the piece's valid moves
         for(int q = 0; q < shield_x; q++){
             piece[chosen_piece].valid_moves_x[q] = valid_line_x[q];
             piece[chosen_piece].valid_moves_y[q] = valid_line_y[q];
         }
-        game_prob.covered = 0;
+        game_prop.covered = 0;
     }
     // Modify array size of valid moves
     piece[chosen_piece].cx = shield_x;
@@ -2666,19 +2752,19 @@ void check_cover(void){
         if(16 <= chosen_piece && chosen_piece < 32){
             ally = 1;
             enemy = -1;
-            game_prob.king_check = 28;
+            game_prop.king_check = 28;
             set = 0;
             end = 16;
         }else if(0 <= chosen_piece && chosen_piece < 16){
             ally = -1;
             enemy = 1;
-            game_prob.king_check = 4;
+            game_prop.king_check = 4;
             set = 16;
             end = 32;
         }
         // Save the threaten piece to a temporary variable
-        if(game_prob.w_check || game_prob.b_check){
-            temp_T = game_prob.T_piece;
+        if(game_prop.w_check || game_prop.b_check){
+            temp_T = game_prop.T_piece;
         }
 
         // Make the chosen piece invisible
@@ -2689,21 +2775,24 @@ void check_cover(void){
         temp_b2 = board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol];
         board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
         board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-
         for(int c = set; c < end; c++){
             if (c == 4 || c == 28 || piece[c].l_o_d == 0 || c == temp_T){
                 // If it is the king or the piece which checks the king or it's a dead piece, continue
                 continue;
             }
             if(check_king_att(c)){
-                // Get the line on which the king lie and it will be checked there
-                check_line();
-                // Get the line on which the enemy lie and check the king's piece from it
-                check_king_line(ally, enemy);
+                if(piece[c].type == 'n'){
+                    king_knight_att();
+                }else{
+                    // Get the line on which the king lie and it will be checked there
+                    check_line();
+                    // Get the line on which the enemy lie and check the king's piece from it
+                    check_king_line(ally, enemy);
+                }
                 // Compare the valid moves and the covered moves
                 covered_matching();
                 // A flag to determine if there is a check and a piece covers another check
-                game_prob.cov_shield = 1;
+                game_prop.cov_shield = 1;
             }
         }
         // Reset the values of the chosen piece on the board
@@ -2728,19 +2817,23 @@ void check_shield(void){
         if(16 <= chosen_piece && chosen_piece < 32){
             ally = 1;
             enemy = -1;
-            game_prob.king_check = 28;
+            game_prop.king_check = 28;
         }else if(0 <= chosen_piece && chosen_piece < 16){
             ally = -1;
             enemy = 1;
-            game_prob.king_check = 4;
+            game_prop.king_check = 4;
         }
         // Get the valid moves of the chosen piece and the threaten piece
         get_valid_moves(chosen_piece);
-        get_valid_moves(game_prob.T_piece);
-        // Get the line on which the king lie and it will be checked there
-        check_line();
-        // Get the line on which the enemy lie and check the king's piece from it
-        check_king_line(ally, enemy);
+        get_valid_moves(game_prop.T_piece);
+        if(piece[game_prop.T_piece].type == 'n'){
+            king_knight_att();
+        }else{
+            // Get the line on which the king lie and it will be checked there
+            check_line();
+            // Get the line on which the enemy lie and check the king's piece from it
+            check_king_line(ally, enemy);
+        }
 
         // Get the intersection between the valid moves of the threaten piece and the chosen one
         for(j = 0; j < line_x; j++){
@@ -2748,7 +2841,7 @@ void check_shield(void){
                 // If there is an equal moves, save it
                 if((piece[chosen_piece].valid_moves_x[r] == line_moves_x[j]) &&
                 (piece[chosen_piece].valid_moves_y[r] == line_moves_y[j])){
-                    game_prob.cover = 1;
+                    game_prop.cover = 1;
                     valid_line_x[shield_x] = piece[chosen_piece].valid_moves_x[r];
                     valid_line_y[shield_y] = piece[chosen_piece].valid_moves_y[r];
                     shield_x++;
@@ -2757,7 +2850,7 @@ void check_shield(void){
             }
         }
         // When there is equal values, record it to the piece's valid moves
-        if(game_prob.cover == 1){
+        if(game_prop.cover == 1){
             for(int q = 0; q < shield_x; q++){
                 piece[chosen_piece].valid_moves_x[q] = valid_line_x[q];
                 piece[chosen_piece].valid_moves_y[q] = valid_line_y[q];
@@ -2780,18 +2873,23 @@ void check_mate(int chosen){
     if(chosen == 28){
         ally = 1;
         enemy = -1;
-        game_prob.king_check = 28;
+        game_prop.king_check = 28;
     }else if(chosen == 4){
         ally = -1;
         enemy = 1;
-        game_prob.king_check = 4;
+        game_prop.king_check = 4;
     }
     // Get the valid moves of the chosen piece
-    get_valid_moves(game_prob.T_piece);
-    // Get the line on which the king lie and it will be checked there
-    check_line();
-    // Get the line on which the enemy lie and check the king's piece from it
-    check_king_line(ally, enemy);
+    get_valid_moves(game_prop.T_piece);
+    if(piece[game_prop.T_piece].type == 'n'){
+        king_knight_att();
+    }else{
+        // Get the line on which the king lie and it will be checked there
+        check_line();
+        // Get the line on which the enemy lie and check the king's piece from it
+        check_king_line(ally, enemy);
+    }
+
     if (chosen == 4){
         // When black king is the checked, check all moves which can be done
         for(int g = 0; g < 16; g++){
@@ -2806,15 +2904,15 @@ void check_mate(int chosen){
                     // Searching for a move to cover the king's piece
                     if((piece[g].valid_moves_x[r] == line_moves_x[j]) &&
                     (piece[g].valid_moves_y[r] == line_moves_y[j])){
-                        game_prob.cover = 1;
+                        game_prop.cover = 1;
                         chosen_piece = g;
-                        game_prob.cov_shield = 0;
+                        game_prop.cov_shield = 0;
                         // Check if there is a cover for the king or the king is checked
                         check_cover();
-                        if(game_prob.cov_shield == 1){
+                        if(game_prop.cov_shield == 1){
                             // If a piece covers a check
                             // and there is another check, equal cover flag to zero
-                            game_prob.cover = 0;
+                            game_prop.cover = 0;
                         }
                     }
                 }
@@ -2834,15 +2932,15 @@ void check_mate(int chosen){
                     // Searching for a move to cover the king's piece
                     if((piece[g].valid_moves_x[r] == line_moves_x[j]) &&
                     (piece[g].valid_moves_y[r] == line_moves_y[j])){
-                        game_prob.cover = 1;
+                        game_prop.cover = 1;
                         chosen_piece = g;
-                        game_prob.cov_shield = 0;
+                        game_prop.cov_shield = 0;
                         // Check if there is a cover for the king or the king is checked
                         check_cover();
-                        if(game_prob.cov_shield == 1){
+                        if(game_prop.cov_shield == 1){
                             // If a piece covers a check
                             // and there is another check, equal cover flag to zero
-                            game_prob.cover = 0;
+                            game_prop.cover = 0;
                         }
                     }
                 }
@@ -2977,13 +3075,13 @@ int check_king_att(int a){
             if(a == chosen_piece){
                 // Determine which king is checked
                 if(P_king == 4){
-                    game_prob.b_check = 1;
+                    game_prop.b_check = 1;
                 }else if(P_king == 28){
-                    game_prob.w_check = 1;
+                    game_prop.w_check = 1;
                 }
-                game_prob.check = 1;
+                game_prop.check = 1;
             }
-            game_prob.T_piece = a;
+            game_prop.T_piece = a;
             return (1);
         }
     }
@@ -3010,25 +3108,25 @@ void dead_pos(void){
     if(dp == 1 &&
     ((piece[6].l_o_d == 1 && !(piece[1].l_o_d == 1)) || (piece[1].l_o_d == 1 && !(piece[6].l_o_d == 1))) && piece[2].l_o_d == 0 &&
     piece[5].l_o_d == 0 && piece[30].l_o_d == 0 && piece[25].l_o_d == 0 && piece[26].l_o_d == 0 && piece[29].l_o_d == 0){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
     }
     // The remaining pieces are a white knight and a white king vs a black king
     else if (dp == 1 &&
     ((piece[25].l_o_d == 1 && !(piece[30].l_o_d == 1)) || (piece[30].l_o_d == 1 && !(piece[25].l_o_d == 1))) && piece[2].l_o_d == 0 &&
     piece[5].l_o_d == 0 && piece[6].l_o_d == 0 && piece[1].l_o_d == 0 && piece[26].l_o_d == 0 && piece[29].l_o_d == 0){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
     }
     // The remaining pieces are a black bishop and a black king vs a white king
     else if (dp == 1 &&
     ((piece[2].l_o_d == 1 && !(piece[5].l_o_d == 1)) || (piece[5].l_o_d == 1 && !(piece[2].l_o_d == 1))) && piece[30].l_o_d == 0 &&
     piece[25].l_o_d == 0 && piece[6].l_o_d == 0 && piece[1].l_o_d == 0 && piece[26].l_o_d == 0 && piece[29].l_o_d == 0){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
     }
     // The remaining pieces are a white bishop and a white king vs a black king
     else if (dp == 1 &&
     ((piece[26].l_o_d == 1 && !(piece[29].l_o_d == 1)) || (piece[29].l_o_d == 1 && !(piece[26].l_o_d == 1))) && piece[30].l_o_d == 0 &&
     piece[25].l_o_d == 0 && piece[6].l_o_d == 0 && piece[1].l_o_d == 0 && piece[2].l_o_d == 0 && piece[5].l_o_d == 0){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
     }
     // The remaining pieces are a black bishop and a black king vs a white bishop and a white king
     // In addition to the bishops are on the same color
@@ -3037,13 +3135,19 @@ void dead_pos(void){
     piece[1].l_o_d == 0 && piece[26].l_o_d == 0 && piece[5].l_o_d == 0) ||
     (piece[26].l_o_d == 1 && piece[5].l_o_d == 1 && piece[30].l_o_d == 0 && piece[25].l_o_d == 0 && piece[6].l_o_d == 0 &&
     piece[1].l_o_d == 0 && piece[2].l_o_d == 0 && piece[29].l_o_d == 0)){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
+    }
+    // If there is a king vs king with a pawn which will be promoted, consider this case
+    else if(dp == 1 && (game_prop.bpb == 1 || game_prop.bpn == 1 || game_prop.wpn == 1 || game_prop.wpn == 1) &&
+    piece[4].l_o_d == 1 && piece[28].l_o_d == 1 && piece[30].l_o_d == 0 && piece[25].l_o_d == 0 && piece[6].l_o_d == 0 &&
+    piece[1].l_o_d == 0 && piece[26].l_o_d == 0 && piece[5].l_o_d == 0 && piece[2].l_o_d == 0 && piece[29].l_o_d == 0){
+        game_prop.d_pos = 1;
     }
     // The remaining pieces are a black king vs a white king
     else if (dp == 1 &&
     piece[4].l_o_d == 1 && piece[28].l_o_d == 1 && piece[30].l_o_d == 0 && piece[25].l_o_d == 0 && piece[6].l_o_d == 0 &&
     piece[1].l_o_d == 0 && piece[26].l_o_d == 0 && piece[5].l_o_d == 0 && piece[2].l_o_d == 0 && piece[29].l_o_d == 0){
-        game_prob.d_pos = 1;
+        game_prop.d_pos = 1;
     }
 }
 
@@ -3056,7 +3160,7 @@ void stalemate(){
     // save the chosen piece to another variable
     temp_chosen2 = chosen_piece;
     // Determine which player is playing
-    if(game_prob.w_o_b == 1){
+    if(game_prop.w_o_b == 1){
         for (int g = 0; g < 16; g++){
             if (piece[g].l_o_d == 0){
                 // If the piece is dead, continue
@@ -3075,7 +3179,7 @@ void stalemate(){
                 return;
             }
         }
-    }else if(game_prob.w_o_b == 0){
+    }else if(game_prop.w_o_b == 0){
         for (int g = 16; g < 32; g++){
             if (piece[g].l_o_d == 0){
                 // If the piece is dead, continue
@@ -3096,8 +3200,8 @@ void stalemate(){
         }
     }
     // Check if the game ends in a draw by stalemate
-    if(st == 1 && game_prob.w_check == 0 && game_prob.b_check == 0){
-        game_prob.stale = 1;
+    if(st == 1 && game_prop.w_check == 0 && game_prop.b_check == 0){
+        game_prop.stale = 1;
     }
     chosen_piece = temp_chosen2;
 }
@@ -3117,40 +3221,40 @@ void white_move(void){
         // Check if this move result in a check
         check_king_att(chosen_piece);
     }
-    game_prob.prev++;
-    game_prob.do_count = 0;
-    if(game_prob.prev > 8){
+    game_prop.prev++;
+    game_prop.do_count = 0;
+    if(game_prop.prev > 8){
         // Check if the game end in a draw by stalemate
         stalemate();
     }
     // Record the move to use it for undo and redo features
-    if(game_prob.b_check == 1){
-        game_prob.comp_mate[game_prob.prev] = 5;
-        game_prob.comp_mate[game_prob.prev + 1] = -5;
-    }else if(game_prob.stale == 1){
-        game_prob.comp_mate[game_prob.prev] = 7;
-    }else if(!(game_prob.comp_mate[game_prob.prev] == -4)){
-        game_prob.comp_mate[game_prob.prev] = 0;
-        if(!(game_prob.comp_mate[game_prob.prev] == 4)){
-            game_prob.comp_mate[game_prob.prev + 1] = 0;
+    if(game_prop.b_check == 1){
+        game_prop.comp_mate[game_prop.prev] = 5;
+        game_prop.comp_mate[game_prop.prev + 1] = -5;
+    }else if(game_prop.stale == 1){
+        game_prop.comp_mate[game_prop.prev] = 7;
+    }else if(!(game_prop.comp_mate[game_prop.prev] == -4)){
+        game_prop.comp_mate[game_prop.prev] = 0;
+        if(!(game_prop.comp_mate[game_prop.prev] == 4)){
+            game_prop.comp_mate[game_prop.prev + 1] = 0;
         }
     }
     if(piece[chosen_piece].temp_brow_prev == -1){
-        game_prob.first_move[game_prob.prev] = -1;
+        game_prop.first_move[game_prop.prev] = -1;
     }else{
-        game_prob.first_move[game_prob.prev] = 0;
+        game_prop.first_move[game_prop.prev] = 0;
     }
-    game_prob.do_moves_x[game_prob.prev] = piece[chosen_piece].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[chosen_piece].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[chosen_piece].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[chosen_piece].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = chosen_piece;
-    game_prob.redo_moves_x[game_prob.prev] = piece[chosen_piece].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[chosen_piece].y;
-    game_prob.next_bcol[game_prob.prev] = piece[chosen_piece].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[chosen_piece].brow;
-    game_prob.chosen_redo[game_prob.prev] = chosen_piece;
-    game_prob.compare[game_prob.prev] = 0;
+    game_prop.do_moves_x[game_prop.prev] = piece[chosen_piece].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[chosen_piece].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[chosen_piece].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[chosen_piece].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = chosen_piece;
+    game_prop.redo_moves_x[game_prop.prev] = piece[chosen_piece].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[chosen_piece].y;
+    game_prop.next_bcol[game_prop.prev] = piece[chosen_piece].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[chosen_piece].brow;
+    game_prop.chosen_redo[game_prop.prev] = chosen_piece;
+    game_prop.compare[game_prop.prev] = 0;
 
     // Update the board which has the type of pieces
     switch (piece[chosen_piece].type){
@@ -3200,40 +3304,40 @@ void black_move(void){
         // Check if this move result in a check
         check_king_att(chosen_piece);
     }
-    game_prob.prev++;
-    game_prob.do_count = 0;
-    if(game_prob.prev > 8){
+    game_prop.prev++;
+    game_prop.do_count = 0;
+    if(game_prop.prev > 8){
         // Check if the game end in a draw by stalemate
         stalemate();
     }
     // Record the move to use it for undo and redo features
-    if(game_prob.w_check == 1){
-        game_prob.comp_mate[game_prob.prev] = 4;
-        game_prob.comp_mate[game_prob.prev + 1] = -4;
-    }else if(game_prob.stale == 1){
-        game_prob.comp_mate[game_prob.prev] = 7;
-    }else if(!(game_prob.comp_mate[game_prob.prev] == -5)){
-        game_prob.comp_mate[game_prob.prev] = 0;
-        if(!(game_prob.comp_mate[game_prob.prev] == 5)){
-            game_prob.comp_mate[game_prob.prev + 1] = 0;
+    if(game_prop.w_check == 1){
+        game_prop.comp_mate[game_prop.prev] = 4;
+        game_prop.comp_mate[game_prop.prev + 1] = -4;
+    }else if(game_prop.stale == 1){
+        game_prop.comp_mate[game_prop.prev] = 7;
+    }else if(!(game_prop.comp_mate[game_prop.prev] == -5)){
+        game_prop.comp_mate[game_prop.prev] = 0;
+        if(!(game_prop.comp_mate[game_prop.prev] == 5)){
+            game_prop.comp_mate[game_prop.prev + 1] = 0;
         }
     }
     if(piece[chosen_piece].temp_brow_prev == -1){
-        game_prob.first_move[game_prob.prev] = -1;
+        game_prop.first_move[game_prop.prev] = -1;
     }else{
-        game_prob.first_move[game_prob.prev] = 0;
+        game_prop.first_move[game_prop.prev] = 0;
     }
-    game_prob.do_moves_x[game_prob.prev] = piece[chosen_piece].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[chosen_piece].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[chosen_piece].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[chosen_piece].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = chosen_piece;
-    game_prob.redo_moves_x[game_prob.prev] = piece[chosen_piece].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[chosen_piece].y;
-    game_prob.next_bcol[game_prob.prev] = piece[chosen_piece].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[chosen_piece].brow;
-    game_prob.chosen_redo[game_prob.prev] = chosen_piece;
-    game_prob.compare[game_prob.prev] = 0;
+    game_prop.do_moves_x[game_prop.prev] = piece[chosen_piece].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[chosen_piece].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[chosen_piece].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[chosen_piece].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = chosen_piece;
+    game_prop.redo_moves_x[game_prop.prev] = piece[chosen_piece].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[chosen_piece].y;
+    game_prop.next_bcol[game_prop.prev] = piece[chosen_piece].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[chosen_piece].brow;
+    game_prop.chosen_redo[game_prop.prev] = chosen_piece;
+    game_prop.compare[game_prop.prev] = 0;
 
     // Update the board which has the type of pieces
     switch (piece[chosen_piece].type){
@@ -3290,20 +3394,20 @@ void white_right_castling(void){
     // Update the board which has the type of pieces
     board_types[piece[31].brow][piece[31].bcol] = wr;
     board_types[piece[31].brow_prev][piece[31].bcol_prev] = 0;
-    game_prob.prev++;
+    game_prop.prev++;
     // Record the move to use it for undo and redo features
-    game_prob.do_moves_x[game_prob.prev] = piece[31].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[31].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[31].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[31].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = 31;
-    game_prob.redo_moves_x[game_prob.prev] = piece[31].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[31].y;
-    game_prob.next_bcol[game_prob.prev] = piece[31].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[31].brow;
-    game_prob.compare[game_prob.prev] = 3;
-    game_prob.chosen_redo[game_prob.prev] = 31;
-    game_prob.wrc_w_k = 0;
+    game_prop.do_moves_x[game_prop.prev] = piece[31].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[31].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[31].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[31].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = 31;
+    game_prop.redo_moves_x[game_prop.prev] = piece[31].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[31].y;
+    game_prop.next_bcol[game_prop.prev] = piece[31].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[31].brow;
+    game_prop.compare[game_prop.prev] = 3;
+    game_prop.chosen_redo[game_prop.prev] = 31;
+    game_prop.wrc_w_k = 0;
 }
 //-----------------------------------------------//
 // White castling for the king on the left side
@@ -3325,20 +3429,20 @@ void white_left_castling(void){
     // Update the board which has the type of pieces
     board_types[piece[24].brow][piece[24].bcol] = wr;
     board_types[piece[24].brow_prev][piece[24].bcol_prev] = 0;
-    game_prob.prev++;
+    game_prop.prev++;
     // Record the move to use it for undo and redo features
-    game_prob.do_moves_x[game_prob.prev] = piece[24].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[24].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[24].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[24].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = 24;
-    game_prob.redo_moves_x[game_prob.prev] = piece[24].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[24].y;
-    game_prob.next_bcol[game_prob.prev] = piece[24].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[24].brow;
-    game_prob.compare[game_prob.prev] = 3;
-    game_prob.chosen_redo[game_prob.prev] = 24;
-    game_prob.wlc_w_k = 0;
+    game_prop.do_moves_x[game_prop.prev] = piece[24].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[24].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[24].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[24].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = 24;
+    game_prop.redo_moves_x[game_prop.prev] = piece[24].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[24].y;
+    game_prop.next_bcol[game_prop.prev] = piece[24].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[24].brow;
+    game_prop.compare[game_prop.prev] = 3;
+    game_prop.chosen_redo[game_prop.prev] = 24;
+    game_prop.wlc_w_k = 0;
 }
 
 //#-------------------------------------------------------------------------#
@@ -3362,20 +3466,20 @@ void black_right_castling(void){
     // Update the board which has the type of pieces
     board_types[piece[7].brow][piece[7].bcol] = br;
     board_types[piece[7].brow_prev][piece[7].bcol_prev] = 0;
-    game_prob.prev++;
+    game_prop.prev++;
     // Record the move to use it for undo and redo features
-    game_prob.do_moves_x[game_prob.prev] = piece[7].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[7].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[7].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[7].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = 7;
-    game_prob.redo_moves_x[game_prob.prev] = piece[7].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[7].y;
-    game_prob.next_bcol[game_prob.prev] = piece[7].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[7].brow;
-    game_prob.compare[game_prob.prev] = 3;
-    game_prob.chosen_redo[game_prob.prev] = 7;
-    game_prob.brc_w_k = 0;
+    game_prop.do_moves_x[game_prop.prev] = piece[7].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[7].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[7].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[7].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = 7;
+    game_prop.redo_moves_x[game_prop.prev] = piece[7].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[7].y;
+    game_prop.next_bcol[game_prop.prev] = piece[7].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[7].brow;
+    game_prop.compare[game_prop.prev] = 3;
+    game_prop.chosen_redo[game_prop.prev] = 7;
+    game_prop.brc_w_k = 0;
 }
 //-----------------------------------------------//
 // Black castling for the king on the left side
@@ -3398,19 +3502,19 @@ void black_left_castling(void){
     board_types[piece[0].brow][piece[0].bcol] = br;
     board_types[piece[0].brow_prev][piece[0].bcol_prev] = 0;
     // Record the move to use it for undo and redo features
-    game_prob.prev++;
-    game_prob.do_moves_x[game_prob.prev] = piece[0].x_prev;
-    game_prob.do_moves_y[game_prob.prev] = piece[0].y_prev;
-    game_prob.prev_bcol[game_prob.prev] = piece[0].bcol_prev;
-    game_prob.prev_brow[game_prob.prev] = piece[0].brow_prev;
-    game_prob.chosen_undo[game_prob.prev] = 0;
-    game_prob.redo_moves_x[game_prob.prev] = piece[0].x;
-    game_prob.redo_moves_y[game_prob.prev] = piece[0].y;
-    game_prob.next_bcol[game_prob.prev] = piece[0].bcol;
-    game_prob.next_brow[game_prob.prev] = piece[0].brow;
-    game_prob.compare[game_prob.prev] = 3;
-    game_prob.chosen_redo[game_prob.prev] = 0;
-    game_prob.blc_w_k = 0;
+    game_prop.prev++;
+    game_prop.do_moves_x[game_prop.prev] = piece[0].x_prev;
+    game_prop.do_moves_y[game_prop.prev] = piece[0].y_prev;
+    game_prop.prev_bcol[game_prop.prev] = piece[0].bcol_prev;
+    game_prop.prev_brow[game_prop.prev] = piece[0].brow_prev;
+    game_prop.chosen_undo[game_prop.prev] = 0;
+    game_prop.redo_moves_x[game_prop.prev] = piece[0].x;
+    game_prop.redo_moves_y[game_prop.prev] = piece[0].y;
+    game_prop.next_bcol[game_prop.prev] = piece[0].bcol;
+    game_prop.next_brow[game_prop.prev] = piece[0].brow;
+    game_prop.compare[game_prop.prev] = 3;
+    game_prop.chosen_redo[game_prop.prev] = 0;
+    game_prop.blc_w_k = 0;
 }
 
 //#-------------------------------------------------------------------------#
@@ -3420,29 +3524,29 @@ void white_kill(int i3){
     dead_piece = i3;
     // Update the flag of (dead or live) to a dead piece
     piece[dead_piece].l_o_d = 0;
-    if(game_prob.prev > 30){
+    if(game_prop.prev > 30){
         // Check if the game will ends in a draw by dead position
         dead_pos();
-        if(game_prob.d_pos == 1){
-            game_prob.comp_mate[game_prob.prev] = 6;
+        if(game_prop.d_pos == 1){
+            game_prop.comp_mate[game_prop.prev] = 6;
         }
     }
     // Record the move to use it for undo and redo features
-    game_prob.dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.dead_moves_y[game_prob.prev] = piece[dead_piece].y;
-    game_prob.prev_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.prev_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_undo[game_prob.prev] = dead_piece;
-    game_prob.next_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.next_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_redo[game_prob.prev] = dead_piece;
-    game_prob.compare[game_prob.prev] = 1;
+    game_prop.dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.dead_moves_y[game_prop.prev] = piece[dead_piece].y;
+    game_prop.prev_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.prev_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_undo[game_prop.prev] = dead_piece;
+    game_prop.next_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.next_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_redo[game_prop.prev] = dead_piece;
+    game_prop.compare[game_prop.prev] = 1;
     // Update (x, y) coordinates to send it to the tomb
     piece[dead_piece].x = 700 + bdx;
     piece[dead_piece].y = 525 - bdy;
     // Record the (x, y) coordinates to send it to the tomb when a redo is used
-    game_prob.re_dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.re_dead_moves_y[game_prob.prev] = piece[dead_piece].y;
+    game_prop.re_dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.re_dead_moves_y[game_prop.prev] = piece[dead_piece].y;
     bdy += 75;
     if(bdy == 75 * 8){
         bdx = 75;
@@ -3462,21 +3566,21 @@ void white_kill_passant(int i3){
     board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 1;
     board[piece[dead_piece].brow][piece[dead_piece].bcol] = 0;
     // Record the move to use it for undo and redo features
-    game_prob.dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.dead_moves_y[game_prob.prev] = piece[dead_piece].y;
-    game_prob.prev_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.prev_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_undo[game_prob.prev] = dead_piece;
-    game_prob.compare[game_prob.prev] = 1;
-    game_prob.next_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.next_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_redo[game_prob.prev] = dead_piece;
+    game_prop.dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.dead_moves_y[game_prop.prev] = piece[dead_piece].y;
+    game_prop.prev_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.prev_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_undo[game_prop.prev] = dead_piece;
+    game_prop.compare[game_prop.prev] = 1;
+    game_prop.next_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.next_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_redo[game_prop.prev] = dead_piece;
     // Update (x, y) coordinates to send it to the tomb
     piece[dead_piece].x = 700 + bdx;
     piece[dead_piece].y = 525 - bdy;
     // Record the (x, y) coordinates to send it to the tomb when a redo is used
-    game_prob.re_dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.re_dead_moves_y[game_prob.prev] = piece[dead_piece].y;
+    game_prop.re_dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.re_dead_moves_y[game_prop.prev] = piece[dead_piece].y;
     bdy += 75;
     if(bdy == 75 * 8){
         bdx = 75;
@@ -3491,29 +3595,29 @@ void black_kill(int i3){
     dead_piece = i3;
     // Update the flag of (dead or live) to a dead piece
     piece[dead_piece].l_o_d = 0;
-    if(game_prob.prev > 30){
+    if(game_prop.prev > 30){
         // Check if the game will ends in a draw by dead position
         dead_pos();
-        if(game_prob.d_pos == 1){
-            game_prob.comp_mate[game_prob.prev] = 6;
+        if(game_prop.d_pos == 1){
+            game_prop.comp_mate[game_prop.prev] = 6;
         }
     }
     // Record the move to use it for undo and redo features
-    game_prob.dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.dead_moves_y[game_prob.prev] = piece[dead_piece].y;
-    game_prob.prev_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.prev_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_undo[game_prob.prev] = dead_piece;
-    game_prob.next_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.next_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_redo[game_prob.prev] = dead_piece;
-    game_prob.compare[game_prob.prev] = 1;
+    game_prop.dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.dead_moves_y[game_prop.prev] = piece[dead_piece].y;
+    game_prop.prev_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.prev_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_undo[game_prop.prev] = dead_piece;
+    game_prop.next_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.next_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_redo[game_prop.prev] = dead_piece;
+    game_prop.compare[game_prop.prev] = 1;
     // Update (x, y) coordinates to send it to the tomb
     piece[dead_piece].x = 950 + wdx;
     piece[dead_piece].y = 525 - wdy;
     // Record the (x, y) coordinates to send it to the tomb when a redo is used
-    game_prob.re_dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.re_dead_moves_y[game_prob.prev] = piece[dead_piece].y;
+    game_prop.re_dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.re_dead_moves_y[game_prop.prev] = piece[dead_piece].y;
     wdy += 75;
     if(wdy == 75 * 8){
         wdx = 75;
@@ -3533,21 +3637,21 @@ void black_kill_passant(int i3){
     board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = -1;
     board[piece[dead_piece].brow][piece[dead_piece].bcol] = 0;
     // Record the move to use it for undo and redo features
-    game_prob.dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.dead_moves_y[game_prob.prev] = piece[dead_piece].y;
-    game_prob.prev_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.prev_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_undo[game_prob.prev] = dead_piece;
-    game_prob.compare[game_prob.prev] = 1;
-    game_prob.next_bcol_dead[game_prob.prev] = piece[dead_piece].bcol;
-    game_prob.next_brow_dead[game_prob.prev] = piece[dead_piece].brow;
-    game_prob.dead_redo[game_prob.prev] = dead_piece;
+    game_prop.dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.dead_moves_y[game_prop.prev] = piece[dead_piece].y;
+    game_prop.prev_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.prev_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_undo[game_prop.prev] = dead_piece;
+    game_prop.compare[game_prop.prev] = 1;
+    game_prop.next_bcol_dead[game_prop.prev] = piece[dead_piece].bcol;
+    game_prop.next_brow_dead[game_prop.prev] = piece[dead_piece].brow;
+    game_prop.dead_redo[game_prop.prev] = dead_piece;
     // Update (x, y) coordinates to send it to the tomb
     piece[dead_piece].x = 950 + wdx;
     piece[dead_piece].y = 525 - wdy;
     // Record the (x, y) coordinates to send it to the tomb when a redo is used
-    game_prob.re_dead_moves_x[game_prob.prev] = piece[dead_piece].x;
-    game_prob.re_dead_moves_y[game_prob.prev] = piece[dead_piece].y;
+    game_prop.re_dead_moves_x[game_prop.prev] = piece[dead_piece].x;
+    game_prop.re_dead_moves_y[game_prop.prev] = piece[dead_piece].y;
     wdy += 75;
     if(wdy == 75 * 8){
         wdx = 75;
@@ -3560,218 +3664,218 @@ void black_kill_passant(int i3){
 // Undo function
 void undo(void){
     // A counter for undo times
-    game_prob.do_count++;
+    game_prop.do_count++;
     // Get the last chosen piece to undo its move
-    chosen_piece = game_prob.chosen_undo[game_prob.prev];
+    chosen_piece = game_prop.chosen_undo[game_prop.prev];
     // Get the previous coordinates for the piece
-    piece[chosen_piece].x = game_prob.do_moves_x[game_prob.prev];
-    piece[chosen_piece].y = game_prob.do_moves_y[game_prob.prev];
-    game_prob.en_passant = game_prob.passant[game_prob.prev-1];
+    piece[chosen_piece].x = game_prop.do_moves_x[game_prop.prev];
+    piece[chosen_piece].y = game_prop.do_moves_y[game_prop.prev];
+    game_prop.en_passant = game_prop.passant[game_prop.prev-1];
     // Determine which is playing now
-    if(game_prob.w_o_b == 1){
+    if(game_prop.w_o_b == 1){
         // Undo the black move
         // Update the previous move to the board which has white and black pieces
         board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-        board[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = -1;
+        board[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = -1;
         // Update the board which has the type of pieces
         switch (piece[chosen_piece].type){
             case 'r':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = br;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = br;
                 break;
             case 'n':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bn;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bn;
                 break;
             case 'b':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bb;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bb;
                 break;
             case 'q':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bq;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bq;
                 break;
             case 'k':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bk;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bk;
                 break;
             case 'p':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bp;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bp;
                 break;
         }
         // Update the column and row number for the piece
-        if(game_prob.first_move[game_prob.prev] == -1){
+        if(game_prop.first_move[game_prop.prev] == -1){
             piece[chosen_piece].bcol_prev = -1;
             piece[chosen_piece].brow_prev = -1;
         }
-        piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
         // If there were castling, undo it
-        if (game_prob.compare[game_prob.prev] == 3 && game_prob.w_o_b == 1 && game_prob.prev > 0){
-            game_prob.bcas = 1;
+        if (game_prop.compare[game_prop.prev] == 3 && game_prop.w_o_b == 1 && game_prop.prev > 0){
+            game_prop.bcas = 1;
             // Update the undo counter
-            game_prob.prev--;
+            game_prop.prev--;
             // Get the last chosen piece to undo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev];
             // Get the previous coordinates for the piece
-            piece[chosen_piece].x = game_prob.do_moves_x[game_prob.prev];
-            piece[chosen_piece].y = game_prob.do_moves_y[game_prob.prev];
+            piece[chosen_piece].x = game_prop.do_moves_x[game_prop.prev];
+            piece[chosen_piece].y = game_prop.do_moves_y[game_prop.prev];
             // Update the previous move to the board which has white and black pieces
             board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = -1;
+            board[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = -1;
             // Update the board which has the type of pieces
             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bk;
+            board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bk;
             // Rest the previous column and row number for the piece (perparing for castling)
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
             // Update the column and row number for the piece
-            piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-            piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
-        }if(game_prob.bcas == 1){
+            piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+            piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
+        }if(game_prop.bcas == 1){
             // Get the last chosen piece to undo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev + 1];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev + 1];
             // Update the column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
-            game_prob.bcas = 0;
+            game_prop.bcas = 0;
         }
-    }else if(game_prob.w_o_b == 0){
+    }else if(game_prop.w_o_b == 0){
         // Undo the white move
         // Update the previous move to the board which has white and black pieces
         board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-        board[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = 1;
+        board[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = 1;
         // Update the board which has the type of pieces
         switch (piece[chosen_piece].type){
             case 'r':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wr;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wr;
                 break;
             case 'n':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wn;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wn;
                 break;
             case 'b':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wb;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wb;
                 break;
             case 'q':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wq;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wq;
                 break;
             case 'k':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wk;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wk;
                 break;
             case 'p':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wp;
+                board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wp;
                 break;
         }
         // Update the column and row number for the piece
-        if(game_prob.first_move[game_prob.prev] == -1){
+        if(game_prop.first_move[game_prop.prev] == -1){
             piece[chosen_piece].bcol_prev = -1;
             piece[chosen_piece].brow_prev = -1;
         }
-        piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
         // If there were castling, undo it
-        if(game_prob.compare[game_prob.prev] == 3 && game_prob.w_o_b == 0 && game_prob.prev > 0){
-            game_prob.wcas = 1;
+        if(game_prop.compare[game_prop.prev] == 3 && game_prop.w_o_b == 0 && game_prop.prev > 0){
+            game_prop.wcas = 1;
             // Update the undo counter
-            game_prob.prev--;
+            game_prop.prev--;
             // Get the last chosen piece to undo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev];
             // Get the previous coordinates for the piece
-            piece[chosen_piece].x = game_prob.do_moves_x[game_prob.prev];
-            piece[chosen_piece].y = game_prob.do_moves_y[game_prob.prev];
+            piece[chosen_piece].x = game_prop.do_moves_x[game_prop.prev];
+            piece[chosen_piece].y = game_prop.do_moves_y[game_prop.prev];
             // Update the previous move to the board which has white and black pieces
             board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = 1;
+            board[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = 1;
             // Update the board which has the type of pieces
             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wk;
+            board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wk;
             // Rest the previous column and row number for the piece (preparing for castling)
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
             // Update the column and row number for the piece
-            piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-            piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
-        }if(game_prob.wcas == 1){
+            piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+            piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
+        }if(game_prop.wcas == 1){
             // Get the last chosen piece to undo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev + 1];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev + 1];
             // Update the column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
-            game_prob.wcas = 0;
+            game_prop.wcas = 0;
         }
     }
     // Undo a promotion for a white piece
-    if (game_prob.w_o_b == 0 && game_prob.compare[game_prob.prev] == 2 && game_prob.prev > 0){
+    if (game_prop.w_o_b == 0 && game_prop.compare[game_prop.prev] == 2 && game_prop.prev > 0){
         // Get the last chosen piece to undo its move
-        chosen_piece = game_prob.chosen_undo[game_prob.prev];
+        chosen_piece = game_prop.chosen_undo[game_prop.prev];
         // Get the previous coordinates for the piece
-        piece[chosen_piece].x = game_prob.do_moves_x[game_prob.prev];
-        piece[chosen_piece].y = game_prob.do_moves_y[game_prob.prev];
+        piece[chosen_piece].x = game_prop.do_moves_x[game_prop.prev];
+        piece[chosen_piece].y = game_prop.do_moves_y[game_prop.prev];
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
         // Reset the promoted piece to its original type (pawn)
         piece[chosen_piece].type = 'p';
         // Update the board which has the type of pieces
-        board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = wp;
+        board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = wp;
         // If there was a check, draw by stalemate or dead position, on the last move,
         // undo it (for attacking and promoted piece)
-        if(game_prob.comp_mate[game_prob.prev] == 5){
-            game_prob.b_check = 0;
-            game_prob.d_pos = 0;
-            game_prob.stale = 0;
-            game_prob.check = 0;
-            game_prob.cover = 0;
+        if(game_prop.comp_mate[game_prop.prev] == 5){
+            game_prop.b_check = 0;
+            game_prop.d_pos = 0;
+            game_prop.stale = 0;
+            game_prop.check = 0;
+            game_prop.cover = 0;
         }
         // Update the undo counter
-        game_prob.prev--;
-        game_prob.do_wpromo = 1;
+        game_prop.prev--;
+        game_prop.do_wpromo = 1;
     }
     // Undo a promotion for a black piece
-    else if (game_prob.w_o_b == 1 && game_prob.compare[game_prob.prev] == 2 && game_prob.prev > 0){
+    else if (game_prop.w_o_b == 1 && game_prop.compare[game_prop.prev] == 2 && game_prop.prev > 0){
         // Get the last chosen piece to undo its move
-        chosen_piece = game_prob.chosen_undo[game_prob.prev];
+        chosen_piece = game_prop.chosen_undo[game_prop.prev];
         // Get the previous coordinates for the piece
-        piece[chosen_piece].x = game_prob.do_moves_x[game_prob.prev];
-        piece[chosen_piece].y = game_prob.do_moves_y[game_prob.prev];
+        piece[chosen_piece].x = game_prop.do_moves_x[game_prop.prev];
+        piece[chosen_piece].y = game_prop.do_moves_y[game_prop.prev];
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.prev_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.prev_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.prev_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.prev_brow[game_prop.prev];
         // Reset the promoted piece to its original type (pawn)
         piece[chosen_piece].type = 'p';
         // Update the board which has the type of pieces
-        board_types[game_prob.prev_brow[game_prob.prev]][game_prob.prev_bcol[game_prob.prev]] = bp;
+        board_types[game_prop.prev_brow[game_prop.prev]][game_prop.prev_bcol[game_prop.prev]] = bp;
         // If there was a check, draw by stalemate or dead position, on the last move,
         // undo it (for attacking and promoted piece)
-        if(game_prob.comp_mate[game_prob.prev] == 4){
-            game_prob.w_check = 0;
-            game_prob.d_pos = 0;
-            game_prob.stale = 0;
-            game_prob.check = 0;
-            game_prob.cover = 0;
+        if(game_prop.comp_mate[game_prop.prev] == 4){
+            game_prop.w_check = 0;
+            game_prop.d_pos = 0;
+            game_prop.stale = 0;
+            game_prop.check = 0;
+            game_prop.cover = 0;
         }
         // Update the undo counter
-        game_prob.prev--;
-        game_prob.do_bpromo = 1;
+        game_prop.prev--;
+        game_prop.do_bpromo = 1;
     }
     // Undo the eliminated piece and return it
-    if (game_prob.compare[game_prob.prev] == 1 && game_prob.prev > 0){
+    if (game_prop.compare[game_prop.prev] == 1 && game_prop.prev > 0){
         // Get the last dead piece to undo its move
-        dead_piece = game_prob.dead_undo[game_prob.prev];
+        dead_piece = game_prop.dead_undo[game_prop.prev];
         // Get the previous coordinates for the piece
-        piece[dead_piece].x = game_prob.dead_moves_x[game_prob.prev];
-        piece[dead_piece].y = game_prob.dead_moves_y[game_prob.prev];
+        piece[dead_piece].x = game_prop.dead_moves_x[game_prop.prev];
+        piece[dead_piece].y = game_prop.dead_moves_y[game_prop.prev];
         // Set the live or dead flag back to live (one)
         piece[dead_piece].l_o_d = 1;
         // White piece is dead
-        if(game_prob.w_o_b == 1){
+        if(game_prop.w_o_b == 1){
             // Update the previous kill to the board which has white and black pieces
             board[piece[dead_piece].brow][piece[dead_piece].bcol] = 1;
             // Update the board which has the type of pieces
@@ -3817,326 +3921,326 @@ void undo(void){
             }
         }
         // Update the column and row number for the piece
-        piece[dead_piece].bcol = game_prob.prev_bcol_dead[game_prob.prev];
-        piece[dead_piece].brow = game_prob.prev_brow_dead[game_prob.prev];
+        piece[dead_piece].bcol = game_prop.prev_bcol_dead[game_prop.prev];
+        piece[dead_piece].brow = game_prop.prev_brow_dead[game_prop.prev];
     }
 
     // If there was a check, draw by stalemate or dead position, on the last move,
     // undo it (for attacking piece)
-    if(game_prob.comp_mate[game_prob.prev] == 4 || game_prob.comp_mate[game_prob.prev] == 5 || game_prob.comp_mate[game_prob.prev] == 6 ||
-        game_prob.comp_mate[game_prob.prev] == 7 || game_prob.comp_mate[game_prob.prev] == 0){
-        game_prob.w_check = 0;
-        game_prob.b_check = 0;
-        game_prob.d_pos = 0;
-        game_prob.stale = 0;
-        game_prob.check = 0;
-        game_prob.cover = 0;
+    if(game_prop.comp_mate[game_prop.prev] == 4 || game_prop.comp_mate[game_prop.prev] == 5 || game_prop.comp_mate[game_prop.prev] == 6 ||
+        game_prop.comp_mate[game_prop.prev] == 7 || game_prop.comp_mate[game_prop.prev] == 0){
+        game_prop.w_check = 0;
+        game_prop.b_check = 0;
+        game_prop.d_pos = 0;
+        game_prop.stale = 0;
+        game_prop.check = 0;
+        game_prop.cover = 0;
     }
     // If there was a check on the last move, undo it (for covering piece)
-    if(game_prob.comp_mate[game_prob.prev] == -5){
-        game_prob.b_check = 1;
-        game_prob.check = 1;
-        game_prob.cover = 1;
+    if(game_prop.comp_mate[game_prop.prev] == -5){
+        game_prop.b_check = 1;
+        game_prop.check = 1;
+        game_prop.cover = 1;
     }
     // If there was a check on the last move, undo it (for covering piece)
-    if(game_prob.comp_mate[game_prob.prev] == -4){
-        game_prob.w_check = 1;
-        game_prob.check = 1;
-        game_prob.cover = 1;
+    if(game_prop.comp_mate[game_prop.prev] == -4){
+        game_prop.w_check = 1;
+        game_prop.check = 1;
+        game_prop.cover = 1;
     }
 
     // Toggle the player's turn
-    if (game_prob.w_o_b == 1){
-        game_prob.w_o_b = 0;
+    if (game_prop.w_o_b == 1){
+        game_prop.w_o_b = 0;
     }else{
-        game_prob.w_o_b = 1;
+        game_prop.w_o_b = 1;
     }
     flag = 0;
     // Update the undo counter
-    game_prob.prev--;
+    game_prop.prev--;
 }
 //-----------------------------------------------//
 void redo(void){
     // Update the undo counter
-    game_prob.prev++;
+    game_prop.prev++;
     // A counter for redo times
-    game_prob.do_count--;
+    game_prop.do_count--;
     // Get the next chosen piece to redo its move
-    chosen_piece = game_prob.chosen_redo[game_prob.prev];
+    chosen_piece = game_prop.chosen_redo[game_prop.prev];
     // Get the next coordinates for the piece
-    piece[chosen_piece].x = game_prob.redo_moves_x[game_prob.prev];
-    piece[chosen_piece].y = game_prob.redo_moves_y[game_prob.prev];
-    game_prob.en_passant = game_prob.passant[game_prob.prev];
+    piece[chosen_piece].x = game_prop.redo_moves_x[game_prop.prev];
+    piece[chosen_piece].y = game_prop.redo_moves_y[game_prop.prev];
+    game_prop.en_passant = game_prop.passant[game_prop.prev];
     // Determine which is playing now
-    if(game_prob.w_o_b == 1){
+    if(game_prop.w_o_b == 1){
         // Redo the white move
         // Update the next move to the board which has white and black pieces
         board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-        board[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = 1;
+        board[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = 1;
         // Update the board which has the type of pieces
         switch (piece[chosen_piece].type){
             case 'r':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wr;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wr;
                 break;
             case 'n':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wn;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wn;
                 break;
             case 'b':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wb;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wb;
                 break;
             case 'q':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wq;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wq;
                 break;
             case 'k':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wk;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wk;
                 break;
             case 'p':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wp;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wp;
                 break;
         }
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
 
         // If there were castling for white, redo it
-        if (game_prob.compare[game_prob.prev + 1] == 3 && game_prob.w_o_b == 1 && game_prob.prev > 0){
-            game_prob.wcas = 1;
+        if (game_prop.compare[game_prop.prev + 1] == 3 && game_prop.w_o_b == 1 && game_prop.prev > 0){
+            game_prop.wcas = 1;
             // Update the undo counter
-            game_prob.prev++;
+            game_prop.prev++;
             // Get the next chosen piece to redo its move
-            chosen_piece = game_prob.chosen_redo[game_prob.prev];
+            chosen_piece = game_prop.chosen_redo[game_prop.prev];
             // Get the next coordinates for the piece
-            piece[chosen_piece].x = game_prob.redo_moves_x[game_prob.prev];
-            piece[chosen_piece].y = game_prob.redo_moves_y[game_prob.prev];
+            piece[chosen_piece].x = game_prop.redo_moves_x[game_prop.prev];
+            piece[chosen_piece].y = game_prop.redo_moves_y[game_prop.prev];
             // Update the next move to the board which has white and black pieces
             board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = 1;
+            board[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = 1;
             // Update the board which has the type of pieces
             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wr;
+            board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wr;
             // Rest the next column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
             // Update the column and row number for the piece
-            piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-            piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
-        }if(game_prob.wcas == 1){
+            piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+            piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
+        }if(game_prop.wcas == 1){
             // Get the next chosen piece to redo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev - 1];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev - 1];
             // Update the column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
-            game_prob.wcas = 0;
+            game_prop.wcas = 0;
         }
     }
     // Determine which is playing now
-    else if(game_prob.w_o_b == 0){
+    else if(game_prop.w_o_b == 0){
         // Redo the black move
         // Update the next move to the board which has white and black pieces
         board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-        board[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = -1;
+        board[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = -1;
         // Update the board which has the type of pieces
         switch (piece[chosen_piece].type){
             case 'r':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = br;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = br;
                 break;
             case 'n':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bn;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bn;
                 break;
             case 'b':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bb;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bb;
                 break;
             case 'q':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bq;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bq;
                 break;
             case 'k':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bk;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bk;
                 break;
             case 'p':
                 board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-                board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bp;
+                board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bp;
                 break;
         }
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
 
         // If there were castling for black, redo it
-        if (game_prob.compare[game_prob.prev + 1] == 3 && game_prob.w_o_b == 0 && game_prob.prev > 0){
-            game_prob.bcas = 1;
+        if (game_prop.compare[game_prop.prev + 1] == 3 && game_prop.w_o_b == 0 && game_prop.prev > 0){
+            game_prop.bcas = 1;
             // Update the undo counter
-            game_prob.prev++;
+            game_prop.prev++;
             // Get the next chosen piece to redo its move
-            chosen_piece = game_prob.chosen_redo[game_prob.prev];
+            chosen_piece = game_prop.chosen_redo[game_prop.prev];
             // Get the next coordinates for the piece
-            piece[chosen_piece].x = game_prob.redo_moves_x[game_prob.prev];
-            piece[chosen_piece].y = game_prob.redo_moves_y[game_prob.prev];
+            piece[chosen_piece].x = game_prop.redo_moves_x[game_prop.prev];
+            piece[chosen_piece].y = game_prop.redo_moves_y[game_prop.prev];
             // Update the next move to the board which has white and black pieces
             board[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = -1;
+            board[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = -1;
             // Update the board which has the type of pieces
             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = 0;
-            board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = br;
+            board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = br;
             // Rest the next column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
             // Update the column and row number for the piece
-            piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-            piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
-        }if(game_prob.bcas == 1){
+            piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+            piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
+        }if(game_prop.bcas == 1){
             // Get the next chosen piece to redo its move
-            chosen_piece = game_prob.chosen_undo[game_prob.prev - 1];
+            chosen_piece = game_prop.chosen_undo[game_prop.prev - 1];
             // Update the column and row number for the piece
             piece[chosen_piece].brow_prev = -1;
             piece[chosen_piece].bcol_prev = -1;
-            game_prob.bcas = 0;
+            game_prop.bcas = 0;
         }
     }
     // If there was white king check, redo it (for attacking piece)
-    if(game_prob.comp_mate[game_prob.prev] == 4){
-        game_prob.w_check = 1;
-        game_prob.check = 1;
+    if(game_prop.comp_mate[game_prop.prev] == 4){
+        game_prop.w_check = 1;
+        game_prop.check = 1;
     }
     // If there was black king check, redo it (for attacking piece)
-    if(game_prob.comp_mate[game_prob.prev] == 5){
-        game_prob.b_check = 1;
-        game_prob.check = 1;
+    if(game_prop.comp_mate[game_prop.prev] == 5){
+        game_prop.b_check = 1;
+        game_prop.check = 1;
     }
     // If there was white king check, redo it (for covering piece)
-    if(game_prob.comp_mate[game_prob.prev] == -4){
-        game_prob.w_check = 0;
-        game_prob.check = 0;
-        game_prob.cover = 0;
+    if(game_prop.comp_mate[game_prop.prev] == -4){
+        game_prop.w_check = 0;
+        game_prop.check = 0;
+        game_prop.cover = 0;
     }
     // If there was black king check, redo it (for covering piece)
-    if(game_prob.comp_mate[game_prob.prev] == -5){
-        game_prob.b_check = 0;
-        game_prob.check = 0;
-        game_prob.cover = 0;
+    if(game_prop.comp_mate[game_prop.prev] == -5){
+        game_prop.b_check = 0;
+        game_prop.check = 0;
+        game_prop.cover = 0;
     }
     // If there was a draw by dead position, redo it
-    if(game_prob.comp_mate[game_prob.prev] == 6){
-        game_prob.d_pos = 1;
+    if(game_prop.comp_mate[game_prop.prev] == 6){
+        game_prop.d_pos = 1;
     }
     // If there was a draw by stalemate, redo it
-    if(game_prob.comp_mate[game_prob.prev] == 7){
-        game_prob.stale = 1;
+    if(game_prop.comp_mate[game_prop.prev] == 7){
+        game_prop.stale = 1;
     }
     // If there was nothing, reset flags value
-    if(game_prob.comp_mate[game_prob.prev] == 0){
-        game_prob.b_check = 0;
-        game_prob.w_check = 0;
-        game_prob.d_pos = 0;
-        game_prob.stale = 0;
-        game_prob.check = 0;
+    if(game_prop.comp_mate[game_prop.prev] == 0){
+        game_prop.b_check = 0;
+        game_prop.w_check = 0;
+        game_prop.d_pos = 0;
+        game_prop.stale = 0;
+        game_prop.check = 0;
     }
     // Redo the kill move and send the dead piece to the tomb
-    if (game_prob.compare[game_prob.prev] == 1 && game_prob.prev > 0){
+    if (game_prop.compare[game_prop.prev] == 1 && game_prop.prev > 0){
         // Get the next dead piece to redo its move
-        dead_piece = game_prob.dead_redo[game_prob.prev];
+        dead_piece = game_prop.dead_redo[game_prop.prev];
         // Get the next coordinates for the piece
-        piece[dead_piece].x = game_prob.re_dead_moves_x[game_prob.prev];
-        piece[dead_piece].y = game_prob.re_dead_moves_y[game_prob.prev];
+        piece[dead_piece].x = game_prop.re_dead_moves_x[game_prop.prev];
+        piece[dead_piece].y = game_prop.re_dead_moves_y[game_prop.prev];
         // Update the column and row number for the piece
-        piece[dead_piece].bcol = game_prob.next_bcol_dead[game_prob.prev];
-        piece[dead_piece].brow = game_prob.next_brow_dead[game_prob.prev];
+        piece[dead_piece].bcol = game_prop.next_bcol_dead[game_prop.prev];
+        piece[dead_piece].brow = game_prop.next_brow_dead[game_prop.prev];
         // Set the live or dead flag back to dead (zero)
         piece[dead_piece].l_o_d = 0;
     }
     // Redo a promotion for a white piece
-    if (game_prob.w_o_b == 1 && game_prob.compare[game_prob.prev + 1] == 2 && game_prob.prev > 0){
+    if (game_prop.w_o_b == 1 && game_prop.compare[game_prop.prev + 1] == 2 && game_prop.prev > 0){
         // Get the next chosen piece to redo its move
-        chosen_piece = game_prob.chosen_redo[game_prob.prev];
+        chosen_piece = game_prop.chosen_redo[game_prop.prev];
         // Get the next coordinates for the piece
-        piece[chosen_piece].x = game_prob.redo_moves_x[game_prob.prev];
-        piece[chosen_piece].y = game_prob.redo_moves_y[game_prob.prev];
+        piece[chosen_piece].x = game_prop.redo_moves_x[game_prop.prev];
+        piece[chosen_piece].y = game_prop.redo_moves_y[game_prop.prev];
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
         // Update the piece to the promoted piece
-        piece[chosen_piece].type = game_prob.redo_promo_type[game_prob.prev];
+        piece[chosen_piece].type = game_prop.redo_promo_type[game_prop.prev];
         switch (piece[chosen_piece].type){
                 case 'r':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wr;
-                    game_prob.wpr = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wr;
+                    game_prop.wpr = 1;
                     break;
                 case 'n':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wn;
-                    game_prob.wpn = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wn;
+                    game_prop.wpn = 1;
                     break;
                 case 'b':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wb;
-                    game_prob.wpb = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wb;
+                    game_prop.wpb = 1;
                     break;
                 case 'q':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = wq;
-                    game_prob.wpq = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = wq;
+                    game_prop.wpq = 1;
                     break;
             }
         // Update the undo counter
-        game_prob.prev++;
+        game_prop.prev++;
         // If there was a check, draw by stalemate or dead position, on the next move,
         // redo it (for attacking and promoted piece)
-        if(game_prob.comp_mate[game_prob.prev] == 5){
-            game_prob.b_check = 1;
-            game_prob.check = 1;
+        if(game_prop.comp_mate[game_prop.prev] == 5){
+            game_prop.b_check = 1;
+            game_prop.check = 1;
         }
     }
     // Redo a promotion for a black piece
-    else if (game_prob.w_o_b == 0 && game_prob.compare[game_prob.prev + 1] == 2 && game_prob.prev > 0){
+    else if (game_prop.w_o_b == 0 && game_prop.compare[game_prop.prev + 1] == 2 && game_prop.prev > 0){
         // Get the next chosen piece to redo its move
-        chosen_piece = game_prob.chosen_redo[game_prob.prev];
+        chosen_piece = game_prop.chosen_redo[game_prop.prev];
         // Get the next coordinates for the piece
-        piece[chosen_piece].x = game_prob.redo_moves_x[game_prob.prev];
-        piece[chosen_piece].y = game_prob.redo_moves_y[game_prob.prev];
+        piece[chosen_piece].x = game_prop.redo_moves_x[game_prop.prev];
+        piece[chosen_piece].y = game_prop.redo_moves_y[game_prop.prev];
         // Update the column and row number for the piece
-        piece[chosen_piece].bcol = game_prob.next_bcol[game_prob.prev];
-        piece[chosen_piece].brow = game_prob.next_brow[game_prob.prev];
+        piece[chosen_piece].bcol = game_prop.next_bcol[game_prop.prev];
+        piece[chosen_piece].brow = game_prop.next_brow[game_prop.prev];
         // Update the piece to the promoted piece
-        piece[chosen_piece].type = game_prob.redo_promo_type[game_prob.prev];
+        piece[chosen_piece].type = game_prop.redo_promo_type[game_prop.prev];
         switch (piece[chosen_piece].type){
                 case 'r':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = br;
-                    game_prob.bpr = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = br;
+                    game_prop.bpr = 1;
                     break;
                 case 'n':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bn;
-                    game_prob.bpn = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bn;
+                    game_prop.bpn = 1;
                     break;
                 case 'b':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bb;
-                    game_prob.bpb = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bb;
+                    game_prop.bpb = 1;
                     break;
                 case 'q':
-                    board_types[game_prob.next_brow[game_prob.prev]][game_prob.next_bcol[game_prob.prev]] = bq;
-                    game_prob.bpq = 1;
+                    board_types[game_prop.next_brow[game_prop.prev]][game_prop.next_bcol[game_prop.prev]] = bq;
+                    game_prop.bpq = 1;
                     break;
             }
         // Update the undo counter
-        game_prob.prev++;
+        game_prop.prev++;
         // If there was a check, draw by stalemate or dead position, on the next move,
         // redo it (for attacking and promoted piece)
-        if(game_prob.comp_mate[game_prob.prev] == 4){
-            game_prob. w_check = 1;
-            game_prob.check = 1;
+        if(game_prop.comp_mate[game_prop.prev] == 4){
+            game_prop. w_check = 1;
+            game_prop.check = 1;
         }
     }
     // Toggle the player's turn
-    if (game_prob.w_o_b == 1){
-        game_prob.w_o_b = 0;
+    if (game_prop.w_o_b == 1){
+        game_prop.w_o_b = 0;
     }else{
-        game_prob.w_o_b = 1;
+        game_prop.w_o_b = 1;
     }
     flag = 0;
 }
@@ -4160,7 +4264,7 @@ void save(void){
         }
     }
     // Save game properties structure
-    fwrite(&game_prob, sizeof(game_prob), 1, last_scene);
+    fwrite(&game_prop, sizeof(game_prop), 1, last_scene);
     // Close the file
     fclose(last_scene);
 }
@@ -4182,7 +4286,7 @@ void load(void){
         }
     }
     // Load game properties structure
-    fread(&game_prob, sizeof(game_prob), 1, last_scene);
+    fread(&game_prop, sizeof(game_prop), 1, last_scene);
     // Close the file
     fclose(last_scene);
     // A loop to determine which piece was promoted
@@ -4266,90 +4370,92 @@ void process_input(void){
 //-----------------------------------------------//
             // On the undo icon, undo the last move
             else if(event.button.button == SDL_BUTTON_LEFT && event.button.x > 850 && event.button.x < 950 &&
-                event.button.y > 400 && event.button.y < 500 && game_prob.prev >= 0 && game_prob.wpromo == 0 && game_prob.bpromo == 0){
+                event.button.y > 400 && event.button.y < 500 && game_prop.prev >= 0 && game_prop.wpromo == 0 && game_prop.bpromo == 0){
                 undo();
                 f_undo = 1;
             }
 //-----------------------------------------------//
             // On the redo icon, redo the next move
             else if(event.button.button == SDL_BUTTON_LEFT && event.button.x > 850 && event.button.x < 950 &&
-                    event.button.y > 500 && event.button.y < 600 && game_prob.do_count > 0 && game_prob.wpromo == 0 && game_prob.bpromo == 0){
+                    event.button.y > 500 && event.button.y < 600 && game_prop.do_count > 0 && game_prop.wpromo == 0 && game_prop.bpromo == 0){
                 redo();
                 f_redo = 1;
             }
 //-----------------------------------------------//
             else{
                 // Black player turn
-                if(game_prob.w_o_b == 0){
+                if(game_prop.w_o_b == 0){
                     // When a black pawn is promoted
                     // Decide which piece will promote to
-                    if(game_prob.bpromo){
+                    if(game_prop.bpromo){
                         chosen_piece = temp_chosen;
                         // If a rook was chosen
                         if(event.button.x > 850 && event.button.x < 950 && event.button.y > 0
                             && event.button.y < 75 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'r';
-                            game_prob.redo_promo_type[game_prob.prev] = 'r';
+                            game_prop.redo_promo_type[game_prop.prev] = 'r';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = br;
-                            game_prob.bpr = 1;
+                            game_prop.bpr = 1;
                         }
                         // If a bishop was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 75
                                 && event.button.y < 150 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'b';
-                            game_prob.redo_promo_type[game_prob.prev] = 'b';
+                            game_prop.redo_promo_type[game_prop.prev] = 'b';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = bb;
+                            game_prop.bpb = 1;
                             // Check if there is a move to be done for the enemy and the king isn't checked
                             stalemate();
-                            game_prob.bpb = 1;
+                            dead_pos();
                         }
                         // If a knight was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 150
                                 && event.button.y < 225 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'n';
-                            game_prob.redo_promo_type[game_prob.prev] = 'n';
+                            game_prop.redo_promo_type[game_prop.prev] = 'n';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = bn;
+                            game_prop.bpn = 1;
                             // Check if there is a move to be done for the enemy and the king isn't checked
                             stalemate();
-                            game_prob.bpn = 1;
+                            dead_pos();
                         }
                         // If a queen was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 225
                                 && event.button.y < 300 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'q';
-                            game_prob.redo_promo_type[game_prob.prev] = 'q';
+                            game_prop.redo_promo_type[game_prop.prev] = 'q';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = bq;
-                            game_prob.bpq = 1;
+                            game_prop.bpq = 1;
                         }
-                        if(game_prob.bpr == 1 || game_prob.bpb == 1 || game_prob.bpn == 1 || game_prob.bpq == 1){
+                        if(game_prop.bpr == 1 || game_prop.bpb == 1 || game_prop.bpn == 1 || game_prop.bpq == 1){
                             // Record the move to use it for undo and redo features
-                            game_prob.prev++;
-                            game_prob.do_moves_x[game_prob.prev] = piece[chosen_piece].x_prev;
-                            game_prob.do_moves_y[game_prob.prev] = piece[chosen_piece].y_prev;
-                            game_prob.prev_bcol[game_prob.prev] = piece[chosen_piece].bcol_prev;
-                            game_prob.prev_brow[game_prob.prev] = piece[chosen_piece].brow_prev;
-                            game_prob.chosen_undo[game_prob.prev] = chosen_piece;
-                            game_prob.redo_moves_x[game_prob.prev] = piece[chosen_piece].x;
-                            game_prob.redo_moves_y[game_prob.prev] = piece[chosen_piece].y;
-                            game_prob.next_bcol[game_prob.prev] = piece[chosen_piece].bcol;
-                            game_prob.next_brow[game_prob.prev] = piece[chosen_piece].brow;
-                            game_prob.chosen_redo[game_prob.prev] = chosen_piece;
-                            game_prob.compare[game_prob.prev] = 2;
-                            game_prob.bpromo = 0;
+                            game_prop.prev++;
+                            game_prop.do_moves_x[game_prop.prev] = piece[chosen_piece].x_prev;
+                            game_prop.do_moves_y[game_prop.prev] = piece[chosen_piece].y_prev;
+                            game_prop.prev_bcol[game_prop.prev] = piece[chosen_piece].bcol_prev;
+                            game_prop.prev_brow[game_prop.prev] = piece[chosen_piece].brow_prev;
+                            game_prop.chosen_undo[game_prop.prev] = chosen_piece;
+                            game_prop.redo_moves_x[game_prop.prev] = piece[chosen_piece].x;
+                            game_prop.redo_moves_y[game_prop.prev] = piece[chosen_piece].y;
+                            game_prop.next_bcol[game_prop.prev] = piece[chosen_piece].bcol;
+                            game_prop.next_brow[game_prop.prev] = piece[chosen_piece].brow;
+                            game_prop.chosen_redo[game_prop.prev] = chosen_piece;
+                            game_prop.compare[game_prop.prev] = 2;
+                            game_prop.bpromo = 0;
                             if(!(chosen_piece == 4)){
                                 // Check if the promoted piece is attacking the king or not
                                 check_king_att(chosen_piece);
                             }
                             // If the king was checked,
-                            if(game_prob.w_check == 1){
+                            if(game_prop.w_check == 1){
                                 // record this move for undo and redo features
-                                game_prob.comp_mate[game_prob.prev] = 4;
-                                game_prob.comp_mate[game_prob.prev + 1] = -4;
-                            }else if(!(game_prob.comp_mate[game_prob.prev] == -5)){
+                                game_prop.comp_mate[game_prop.prev] = 4;
+                                game_prop.comp_mate[game_prop.prev + 1] = -4;
+                            }else if(!(game_prop.comp_mate[game_prop.prev] == -5)){
                                 // record this move for undo and redo features
-                                game_prob.comp_mate[game_prob.prev] = 0;
+                                game_prop.comp_mate[game_prop.prev] = 0;
                             }
-                            game_prob.w_o_b = 1;
+                            game_prop.w_o_b = 1;
                         }
                     }else{
                         // If it is a normal move
@@ -4364,11 +4470,11 @@ void process_input(void){
                                     flag = 1;
                                     chosen_piece = i;
                                     // If the king was checked
-                                    if(game_prob.b_check){
-                                        game_prob.cov_shield = 0;
+                                    if(game_prop.b_check){
+                                        game_prop.cov_shield = 0;
                                         // Check if there is a cover for the king or the king is checked
                                         check_cover();
-                                        if(game_prob.cov_shield == 0){
+                                        if(game_prop.cov_shield == 0){
                                             // Check if there is a piece which masks (shield) the enemy attack
                                             check_shield();
                                         }
@@ -4393,76 +4499,78 @@ void process_input(void){
                     }
                 }
                 // White player turn
-                else if(game_prob.w_o_b == 1){
+                else if(game_prop.w_o_b == 1){
                     // When a black pawn is promoted
                     // Decide which piece will promote to
-                    if(game_prob.wpromo){
+                    if(game_prop.wpromo){
                         chosen_piece = temp_chosen;
                         // If a rook was chosen
                         if(event.button.x > 850 && event.button.x < 950 && event.button.y > 0
                             && event.button.y < 75 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'r';
-                            game_prob.redo_promo_type[game_prob.prev] = 'r';
+                            game_prop.redo_promo_type[game_prop.prev] = 'r';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = wr;
-                            game_prob.wpr = 1;
+                            game_prop.wpr = 1;
                         }
                         // If a bishop was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 75
                                 && event.button.y < 150 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'b';
-                            game_prob.redo_promo_type[game_prob.prev] = 'b';
+                            game_prop.redo_promo_type[game_prop.prev] = 'b';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = wb;
-                            game_prob.wpb = 1;
+                            game_prop.wpb = 1;
                             // Check if there is a move to be done for the enemy and the king isn't checked
                             stalemate();
+                            dead_pos();
                         }
                         // If a knight was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 150
                                 && event.button.y < 225 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'n';
-                            game_prob.redo_promo_type[game_prob.prev] = 'n';
+                            game_prop.redo_promo_type[game_prop.prev] = 'n';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = wn;
-                            game_prob.wpn = 1;
+                            game_prop.wpn = 1;
                             // Check if there is a move to be done for the enemy and the king isn't checked
                             stalemate();
+                            dead_pos();
                         }
                         // If a queen was chosen
                         else if(event.button.x > 850 && event.button.x < 950 && event.button.y > 225
                                 && event.button.y < 300 && event.button.button == SDL_BUTTON_LEFT){
                             piece[chosen_piece].type = 'q';
-                            game_prob.redo_promo_type[game_prob.prev] = 'q';
+                            game_prop.redo_promo_type[game_prop.prev] = 'q';
                             board_types[piece[chosen_piece].brow][piece[chosen_piece].bcol] = wq;
-                            game_prob.wpq = 1;
+                            game_prop.wpq = 1;
                         }
-                        if(game_prob.wpr == 1 || game_prob.wpb == 1 || game_prob.wpn == 1 || game_prob.wpq == 1){
+                        if(game_prop.wpr == 1 || game_prop.wpb == 1 || game_prop.wpn == 1 || game_prop.wpq == 1){
                             // Record the move to use it for undo and redo features
-                            game_prob.prev++;
-                            game_prob.do_moves_x[game_prob.prev] = piece[chosen_piece].x_prev;
-                            game_prob.do_moves_y[game_prob.prev] = piece[chosen_piece].y_prev;
-                            game_prob.prev_bcol[game_prob.prev] = piece[chosen_piece].bcol_prev;
-                            game_prob.prev_brow[game_prob.prev] = piece[chosen_piece].brow_prev;
-                            game_prob.chosen_undo[game_prob.prev] = chosen_piece;
-                            game_prob.redo_moves_x[game_prob.prev] = piece[chosen_piece].x;
-                            game_prob.redo_moves_y[game_prob.prev] = piece[chosen_piece].y;
-                            game_prob.next_bcol[game_prob.prev] = piece[chosen_piece].bcol;
-                            game_prob.next_brow[game_prob.prev] = piece[chosen_piece].brow;
-                            game_prob.chosen_redo[game_prob.prev] = chosen_piece;
-                            game_prob.compare[game_prob.prev] = 2;
-                            game_prob.wpromo = 0;
+                            game_prop.prev++;
+                            game_prop.do_moves_x[game_prop.prev] = piece[chosen_piece].x_prev;
+                            game_prop.do_moves_y[game_prop.prev] = piece[chosen_piece].y_prev;
+                            game_prop.prev_bcol[game_prop.prev] = piece[chosen_piece].bcol_prev;
+                            game_prop.prev_brow[game_prop.prev] = piece[chosen_piece].brow_prev;
+                            game_prop.chosen_undo[game_prop.prev] = chosen_piece;
+                            game_prop.redo_moves_x[game_prop.prev] = piece[chosen_piece].x;
+                            game_prop.redo_moves_y[game_prop.prev] = piece[chosen_piece].y;
+                            game_prop.next_bcol[game_prop.prev] = piece[chosen_piece].bcol;
+                            game_prop.next_brow[game_prop.prev] = piece[chosen_piece].brow;
+                            game_prop.chosen_redo[game_prop.prev] = chosen_piece;
+                            game_prop.compare[game_prop.prev] = 2;
+                            game_prop.wpromo = 0;
                             if(!(chosen_piece == 28)){
                                 // Check if the promoted piece is attacking the king or not
                                 check_king_att(chosen_piece);
                             }
                             // If the king was checked,
-                            if(game_prob.b_check == 1){
+                            if(game_prop.b_check == 1){
                                 // record this move for undo and redo features
-                                game_prob.comp_mate[game_prob.prev] = 5;
-                                game_prob.comp_mate[game_prob.prev + 1] = -5;
-                            }else if(!(game_prob.comp_mate[game_prob.prev] == -4)){
+                                game_prop.comp_mate[game_prop.prev] = 5;
+                                game_prop.comp_mate[game_prop.prev + 1] = -5;
+                            }else if(!(game_prop.comp_mate[game_prop.prev] == -4)){
                                 // record this move for undo and redo features
-                                game_prob.comp_mate[game_prob.prev] = 0;
+                                game_prop.comp_mate[game_prop.prev] = 0;
                             }
-                            game_prob.w_o_b = 0;
+                            game_prop.w_o_b = 0;
                         }
                     }else{
                         // If it is a normal move
@@ -4477,11 +4585,11 @@ void process_input(void){
                                     flag = 1;
                                     chosen_piece = i;
                                     // If the king was checked
-                                    if(game_prob.w_check){
-                                        game_prob.cov_shield = 0;
+                                    if(game_prop.w_check){
+                                        game_prop.cov_shield = 0;
                                         // Check if there is a cover for the king or the king is checked
                                         check_cover();
-                                        if(game_prob.cov_shield == 0){
+                                        if(game_prop.cov_shield == 0){
                                             // Check if there is a piece which masks (shield) the enemy attack
                                             check_shield();
                                         }
@@ -4546,7 +4654,7 @@ void process_input(void){
 //#-------------------------------------------------------------------------#
 
             // White Turn
-            else if (flag == 1 && game_prob.w_o_b == 1 && event.button.button == SDL_BUTTON_LEFT && event.button.x<=600){
+            else if (flag == 1 && game_prop.w_o_b == 1 && event.button.button == SDL_BUTTON_LEFT && event.button.x<=600){
                 flag = 0;
                 // Save the last move to a temporary variable to check if it is valid or not
                 piece[chosen_piece].xtemp = ((event.button.x) / 75) * 75;
@@ -4554,9 +4662,9 @@ void process_input(void){
                 // Check if this move is valid or not
                 if (check_valid()){
                     // If the king was checked, clear the check
-                    if(game_prob.w_check == 1){
-                        game_prob.w_check = 0;
-                        game_prob.cover = 0;
+                    if(game_prop.w_check == 1){
+                        game_prop.w_check = 0;
+                        game_prop.cover = 0;
                     }
                     // Update the (x, y) coordinates for the piece
                     piece[chosen_piece].x = ((event.button.x) / 75) * 75;
@@ -4564,22 +4672,22 @@ void process_input(void){
                     // Record the white movement and update the boards
                     white_move();
                     // Preparing for en passant
-                    if(game_prob.en_passant >= 0 && piece[chosen_piece].type == 'p' &&
+                    if(game_prop.en_passant >= 0 && piece[chosen_piece].type == 'p' &&
                     piece[chosen_piece].brow_prev == 6 && piece[chosen_piece].brow == 4){
-                        game_prob.en_passant = 2;
+                        game_prop.en_passant = 2;
                     }
                     // Check if there is a promotion or not
                     if(piece[chosen_piece].type == 'p' && piece[chosen_piece].brow == 0){
-                        game_prob.wpromo = 1;
+                        game_prop.wpromo = 1;
                         render();
                     }else{
-                        game_prob.wpromo = 0;
+                        game_prop.wpromo = 0;
                     }
                     // Check if there is castling or not
-                    if(game_prob.wrc_w_k && (event.button.x / 75 == 6) && piece[28].bcol == 6 && piece[28].brow == 7){
+                    if(game_prop.wrc_w_k && (event.button.x / 75 == 6) && piece[28].bcol == 6 && piece[28].brow == 7){
                         white_right_castling();
                     }
-                    else if(game_prob.wlc_w_k && (event.button.x / 75 == 2) && piece[28].bcol == 2 && piece[28].brow == 7){
+                    else if(game_prop.wlc_w_k && (event.button.x / 75 == 2) && piece[28].bcol == 2 && piece[28].brow == 7){
                         white_left_castling();
                     }
                     // Check if the move result in a kill or not
@@ -4603,14 +4711,14 @@ void process_input(void){
                         }
                     }
                     // If there is a promotion, toggle the turn
-                    if(game_prob.wpromo){
-                        game_prob.w_o_b = 1;
+                    if(game_prop.wpromo){
+                        game_prop.w_o_b = 1;
                     }else{
-                        game_prob.w_o_b = 0;
+                        game_prop.w_o_b = 0;
                         // Preparing for en passant
-                        if(game_prob.en_passant > 0){
-                            game_prob.en_passant--;
-                            game_prob.passant[game_prob.prev] = game_prob.en_passant;
+                        if(game_prop.en_passant > 0){
+                            game_prop.en_passant--;
+                            game_prop.passant[game_prop.prev] = game_prop.en_passant;
                         }
                     }
                 }else{
@@ -4621,13 +4729,13 @@ void process_input(void){
                     render();
                     SDL_Delay(1000);
                     wrong = 0;
-                    game_prob.w_o_b = 1;
+                    game_prop.w_o_b = 1;
                 }
             }
  //#-------------------------------------------------------------------------#
 
             // Black Turn
-            else if (flag == 1 && game_prob.w_o_b == 0 && event.button.button == SDL_BUTTON_LEFT && event.button.x<=600){
+            else if (flag == 1 && game_prop.w_o_b == 0 && event.button.button == SDL_BUTTON_LEFT && event.button.x<=600){
                 flag = 0;
                 // Save the last move to a temporary variable to check if it is valid or not
                 piece[chosen_piece].xtemp = ((event.button.x) / 75) * 75;
@@ -4635,9 +4743,9 @@ void process_input(void){
                 // Check if this move is valid or not
                 if (check_valid()){
                     // If the king was checked, clear the check
-                    if(game_prob.b_check == 1){
-                        game_prob.b_check = 0;
-                        game_prob.cover = 0;
+                    if(game_prop.b_check == 1){
+                        game_prop.b_check = 0;
+                        game_prop.cover = 0;
                     }
                     // Update the (x, y) coordinates for the piece
                     piece[chosen_piece].x = ((event.button.x) / 75) * 75;
@@ -4645,22 +4753,22 @@ void process_input(void){
                     // Record the white movement and update the boards
                     black_move();
                     // Preparing for en passant
-                    if(game_prob.en_passant >= 0 && piece[chosen_piece].type == 'p' &&
+                    if(game_prop.en_passant >= 0 && piece[chosen_piece].type == 'p' &&
                     piece[chosen_piece].brow_prev == 1 && piece[chosen_piece].brow == 3){
-                        game_prob.en_passant = 2;
+                        game_prop.en_passant = 2;
                     }
                     // Check if there is a promotion or not
                     if(piece[chosen_piece].type == 'p' && piece[chosen_piece].brow == 7){
-                        game_prob.bpromo = 1;
+                        game_prop.bpromo = 1;
                         render();
                     }else{
-                        game_prob.bpromo = 0;
+                        game_prop.bpromo = 0;
                     }
                     // Check if there is castling or not
-                    if(game_prob.brc_w_k && (event.button.x / 75 == 6) && piece[4].bcol == 6 && piece[4].brow == 0){
+                    if(game_prop.brc_w_k && (event.button.x / 75 == 6) && piece[4].bcol == 6 && piece[4].brow == 0){
                         black_right_castling();
                     }
-                    else if(game_prob.blc_w_k && (event.button.x / 75 == 2) && piece[4].bcol == 2 && piece[4].brow == 0){
+                    else if(game_prop.blc_w_k && (event.button.x / 75 == 2) && piece[4].bcol == 2 && piece[4].brow == 0){
                         black_left_castling();
                     }
                     // Check if the move result in a kill or not
@@ -4684,14 +4792,14 @@ void process_input(void){
                         }
                     }
                     // If there is a promotion, toggle the turn
-                    if(game_prob.bpromo){
-                        game_prob.w_o_b = 0;
+                    if(game_prop.bpromo){
+                        game_prop.w_o_b = 0;
                     }else{
-                        game_prob.w_o_b = 1;
+                        game_prop.w_o_b = 1;
                         // Preparing for en passant
-                        if(game_prob.en_passant > 0){
-                            game_prob.en_passant--;
-                            game_prob.passant[game_prob.prev] = game_prob.en_passant;
+                        if(game_prop.en_passant > 0){
+                            game_prop.en_passant--;
+                            game_prop.passant[game_prop.prev] = game_prop.en_passant;
                         }
                     }
                 }else{
@@ -4702,7 +4810,7 @@ void process_input(void){
                     render();
                     SDL_Delay(1000);
                     wrong = 0;
-                    game_prob.w_o_b = 0;
+                    game_prop.w_o_b = 0;
                 }
             }
             // Reset the values of arrays
@@ -4713,30 +4821,30 @@ void process_input(void){
             // Save the chosen piece in a temporary variable
             temp_chosen = chosen_piece;
             // If the king was checked, check if it is the end of the game or not
-            if(game_prob.b_check == 1){
+            if(game_prop.b_check == 1){
                 chosen_piece = 4;
                 // Get the valid moves of king's piece
                 get_valid_moves(chosen_piece);
                 // Check if it was a check mate or a normal check
                 check_mate(chosen_piece);
-                if(game_prob.b_check == 1 && game_prob.cover == 0 && piece[4].valid_moves_x[0] == -10){
-                    game_prob.b_mate = 1;
+                if(game_prop.b_check == 1 && game_prop.cover == 0 && piece[4].valid_moves_x[0] == -10){
+                    game_prop.b_mate = 1;
                 }
             }else{
-                game_prob.b_mate = 0;
+                game_prop.b_mate = 0;
             }
             // If the king was checked, check if it is the end of the game or not
-            if(game_prob.w_check == 1){
+            if(game_prop.w_check == 1){
                 chosen_piece = 28;
                 // Get the valid moves of king's piece
                 get_valid_moves(chosen_piece);
                 // Check if it was a check mate or a normal check
                 check_mate(chosen_piece);
-                if(game_prob.w_check == 1 && game_prob.cover == 0 && piece[28].valid_moves_x[0] == -10){
-                    game_prob.w_mate = 1;
+                if(game_prop.w_check == 1 && game_prop.cover == 0 && piece[28].valid_moves_x[0] == -10){
+                    game_prop.w_mate = 1;
                 }
             }else{
-                game_prob.w_mate = 0;
+                game_prop.w_mate = 0;
             }
             chosen_piece = temp_chosen;
 
@@ -4780,7 +4888,7 @@ void render(void){
     SDL_RenderCopy(renderer, texture[0], NULL, NULL);
 //-----------------------------------------------//
     // Render the turn to be for white
-    if(game_prob.w_o_b == 1 && game_prob.w_mate == 0){
+    if(game_prop.w_o_b == 1 && game_prop.w_mate == 0){
         white_turn_dim.x = 600;
         white_turn_dim.y = 400;
         white_turn_dim.w = 100;
@@ -4789,7 +4897,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // Render the turn to be for black
-    if(game_prob.w_o_b == 0 && game_prob.b_mate == 0){
+    if(game_prop.w_o_b == 0 && game_prop.b_mate == 0){
         black_turn_dim.x = 600;
         black_turn_dim.y = 100;
         black_turn_dim.w = 100;
@@ -4878,7 +4986,7 @@ void render(void){
     SDL_RenderCopy(renderer, moves_texture, NULL, &moves_dim);
 //-----------------------------------------------//
     // If there is a normal check, render "check" word
-    if(game_prob.w_check || game_prob.b_check){
+    if(game_prop.w_check || game_prop.b_check){
         check_dim.x = 850;
         check_dim.y = 270;
         check_dim.w = 100;
@@ -4887,7 +4995,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // Render a menu, if there is a promotion for white
-    if(game_prob.wpromo){
+    if(game_prop.wpromo){
         wpromo_dim.x = 850;
         wpromo_dim.y = 0;
         wpromo_dim.w = 100;
@@ -4896,7 +5004,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // Render a menu, if there is a promotion for black
-    if(game_prob.bpromo){
+    if(game_prop.bpromo){
         bpromo_dim.x = 850;
         bpromo_dim.y = 0;
         bpromo_dim.w = 100;
@@ -4925,63 +5033,63 @@ void render(void){
     }
 //-----------------------------------------------//
     // When a redo is done, reload the promoted piece (for white player)
-    if(game_prob.do_bpromo){
+    if(game_prop.do_bpromo){
         texture[chosen_piece + 1] = texture[12];
-        game_prob.do_bpromo = 0;
+        game_prop.do_bpromo = 0;
     }
 //-----------------------------------------------//
     // When a redo is done, reload the promoted piece (for black player)
-    else if(game_prob.do_wpromo){
+    else if(game_prop.do_wpromo){
         texture[chosen_piece + 1] = texture[21];
-        game_prob.do_wpromo = 0;
+        game_prop.do_wpromo = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a black rook
-    if(game_prob.bpr){
+    if(game_prop.bpr){
         texture[chosen_piece + 1] = texture[1];
-        game_prob.bpr = 0;
+        game_prop.bpr = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a black bishop
-    else if(game_prob.bpb){
+    else if(game_prop.bpb){
         texture[chosen_piece + 1] = texture[3];
-        game_prob.bpb = 0;
+        game_prop.bpb = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a black knight
-    else if(game_prob.bpn){
+    else if(game_prop.bpn){
         texture[chosen_piece + 1] = texture[2];
-        game_prob.bpn = 0;
+        game_prop.bpn = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a black queen
-    else if(game_prob.bpq){
+    else if(game_prop.bpq){
         texture[chosen_piece + 1] = texture[4];
-        game_prob.bpq = 0;
+        game_prop.bpq = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a white rook
-    else if(game_prob.wpr){
+    else if(game_prop.wpr){
         texture[chosen_piece + 1] = texture[32] ;
-        game_prob.wpr = 0;
+        game_prop.wpr = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a white bishop
-    else if(game_prob.wpb){
+    else if(game_prop.wpb){
         texture[chosen_piece + 1] = texture[30];
-        game_prob.wpb = 0;
+        game_prop.wpb = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a white knight
-    else if(game_prob.wpn){
+    else if(game_prop.wpn){
         texture[chosen_piece + 1] = texture[31];
-        game_prob.wpn = 0;
+        game_prop.wpn = 0;
     }
 //-----------------------------------------------//
     // Render the promoted pawn to a white queen
-    else if(game_prob.wpq){
+    else if(game_prop.wpq){
         texture[chosen_piece + 1] = texture[28];
-        game_prob.wpq = 0;
+        game_prop.wpq = 0;
     }
 //-----------------------------------------------//
     // Render all piece
@@ -4994,7 +5102,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // If the game ends in check mate for the black, then white wins
-    if(game_prob.b_mate){
+    if(game_prop.b_mate){
         b_mate_dim.x = 0;
         b_mate_dim.y = 0;
         b_mate_dim.w = 600;
@@ -5003,7 +5111,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // If the game ends in check mate for the white, then black wins
-    if(game_prob.w_mate){
+    if(game_prop.w_mate){
         w_mate_dim.x = 0;
         w_mate_dim.y = 0;
         w_mate_dim.w = 600;
@@ -5012,7 +5120,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // If the game ends in a draw by dead position, render this texture
-    if(game_prob.d_pos){
+    if(game_prop.d_pos){
         d_pos_dim.x = 0;
         d_pos_dim.y = 0;
         d_pos_dim.w = 600;
@@ -5021,7 +5129,7 @@ void render(void){
     }
 //-----------------------------------------------//
     // If the game ends in a draw by stalemate, render this texture
-    if(game_prob.stale){
+    if(game_prop.stale){
         stale_dim.x = 0;
         stale_dim.y = 0;
         stale_dim.w = 600;
