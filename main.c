@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // Authors:
 // Youssef Ali Mohamed Bazina & Ahmed Adel Abudef
 
@@ -10390,4 +10390,3 @@ int SDL_main(int argc, char *argv[]){
     return 0;
 }
 //#-------------------------------------------END----------------------------------------------#
->>>>>>> 78ef9a3d624ede2677c090b3df9606c897b96ae3
